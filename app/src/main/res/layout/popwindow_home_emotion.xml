@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_sort_relevancy"
+        style="@style/popwindow_plat_emotion"
+        android:text="相关度排序" />
+
+    <TextView
+        android:id="@+id/tv_sort_exact"
+        style="@style/popwindow_plat_emotion"
+        android:text="精确匹配" />
+
+    <TextView
+        android:id="@+id/tv_sort_time"
+        style="@style/popwindow_plat_emotion"
+        android:text="时间降序" />
+
+</LinearLayout>

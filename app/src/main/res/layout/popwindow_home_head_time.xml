@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_24H"
+        style="@style/popwindow_headtime"
+        android:text="24H" />
+
+    <TextView
+        android:id="@+id/tv_yesterday"
+        style="@style/popwindow_headtime"
+        android:text="昨天" />
+
+    <TextView
+        android:id="@+id/tv_aweek"
+        style="@style/popwindow_headtime"
+        android:text="一周" />
+
+    <TextView
+        android:id="@+id/tv_amonth"
+        style="@style/popwindow_headtime"
+        android:text="30天" />
+</LinearLayout>

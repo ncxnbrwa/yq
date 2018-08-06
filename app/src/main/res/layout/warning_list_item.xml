@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="12dp"
+    android:layout_marginRight="12dp"
+    android:layout_marginTop="12dp"
+    android:foreground="?attr/selectableItemBackground"
+    app:contentPadding="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_warning"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:padding="6dp"
+            android:src="@drawable/icon_yellow_warning" />
+
+        <TextView
+            android:id="@+id/tv_warning_time"
+            style="@style/AppBaseTheme.WarningText"
+            android:layout_alignTop="@+id/iv_warning"
+            android:layout_toRightOf="@+id/iv_warning"
+            tools:text="2017-10-28" />
+
+        <TextView
+            android:id="@+id/tv_warning_name"
+            style="@style/AppBaseTheme.WarningText"
+            android:layout_toRightOf="@+id/iv_warning"
+            android:layout_below="@+id/tv_warning_time"
+            android:gravity="start"
+            tools:text="项目标题" />
+
+        <TextView
+            android:id="@+id/tv_warning_color"
+            style="@style/AppBaseTheme.WarningText"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            tools:text="黄色预警" />
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

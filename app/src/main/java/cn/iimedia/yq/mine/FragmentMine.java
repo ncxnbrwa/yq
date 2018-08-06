@@ -1,0 +1,149 @@
+package cn.iimedia.yq.mine;
+
+import android.support.annotation.NonNull;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.TextView;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.blankj.utilcode.util.EmptyUtils;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+import cn.iimedia.yq.Base.BaseFragment;
+import cn.iimedia.yq.Base.utils.DialogUtils;
+import cn.iimedia.yq.Base.utils.ELS;
+import cn.iimedia.yq.Base.utils.MyUtils;
+import cn.iimedia.yq.LoginActivity;
+import cn.iimedia.yq.R;
+import cn.iimedia.yq.http.APIConstants;
+import cn.iimedia.yq.http.RequestEngine;
+import cn.iimedia.yq.http.bean.ResponseBean.UserInfoBean;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+/**
+ * Created by iiMedia on 2017/12/20.
+ * 个人界面
+ */
+
+public class FragmentMine extends BaseFragment {
+    @BindView(R.id.tv_data_level)
+    TextView tvLevel;
+    @BindView(R.id.tv_data_phone)
+    TextView tvPhone;
+    @BindView(R.id.tv_data_email)
+    TextView tvEmail;
+    @BindView(R.id.tv_data_task)
+    TextView tvTask;
+    @BindView(R.id.tv_data_score)
+    TextView tvScore;
+    @BindView(R.id.index_toolbar)
+    Toolbar toolbar;
+
+    ELS els;
+    APIConstants apiConstants;
+
+    public static FragmentMine getInstance() {
+        FragmentMine fragmentMine = new FragmentMine();
+        return fragmentMine;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_mine;
+    }
+
+    @Override
+    protected void init() {
+        els = ELS.getInstance(getBaseActivity());
+        apiConstants = RequestEngine.createService(APIConstants.class);
+        toolbar.setTitle("个人中心");
+    }
+
+    @Override
+    protected void lazyLoad() {
+        Call<UserInfoBean> getUserCall = apiConstants.getUserInfo();
+        getUserCall.enqueue(new Callback<UserInfoBean>() {
+            @Override
+            public void onResponse(Call<UserInfoBean> call, Response<UserInfoBean> response) {
+                if (getBaseActivity() == null) return;
+                if (EmptyUtils.isNotEmpty(response.body())) {
+                    UserInfoBean userInfo = response.body();
+                    MyUtils.reLogin(userInfo.getCode(),userInfo.getLogin_error(), getBaseActivity());
+                    //0-1——基础用户
+                    //4——高级用户
+                    //3——企业用户
+                    //9——iiMedia
+                    //8——体验用户
+                    int type = userInfo.getType();
+                    switch (type) {
+                        case 3:
+                            tvLevel.setText("企业用户");
+                            break;
+                        case 4:
+                            tvLevel.setText("高级用户");
+                            break;
+                        case 8:
+                            tvLevel.setText("体验用户");
+                            break;
+                        case 9:
+                            tvLevel.setText("iiMedia");
+                            break;
+                        default:
+                            tvLevel.setText("基础用户");
+                            break;
+                    }
+                    tvScore.setText(String.valueOf(userInfo.getCcoin()));
+                    tvPhone.setText(userInfo.getUsername());
+                    tvTask.setText(String.valueOf(els.getIntData(ELS.CURRENT_TASK_COUNT)));
+                    tvEmail.setText(userInfo.getEmail());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserInfoBean> call, Throwable t) {
+                if (getBaseActivity() == null) return;
+                showToast("个人信息获取失败");
+            }
+        });
+    }
+
+    @OnClick(R.id.rl_logout)
+    public void click(View view) {
+        final MaterialDialog logoutDialog = DialogUtils.showPositiveNegativeContent(getBaseActivity(), "退出登录吗?",
+                new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        switch (which) {
+                            case POSITIVE:
+                                logout();
+                                break;
+                            case NEGATIVE:
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                });
+        logoutDialog.show();
+    }
+
+    void logout() {
+        Call<Void> logoutCall = apiConstants.logout();
+        logoutCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                els.clearUserInfo();
+                mElfApp.finishApplication();
+                getBaseActivity().toActivity(LoginActivity.class, null);
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                showToast("操作失败");
+            }
+        });
+    }
+}
