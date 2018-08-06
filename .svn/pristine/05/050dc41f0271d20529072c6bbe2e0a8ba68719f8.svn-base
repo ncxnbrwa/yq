@@ -1,0 +1,233 @@
+package cn.iimedia.yq;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.blankj.utilcode.util.EmptyUtils;
+import com.qmuiteam.qmui.widget.QMUIFloatLayout;
+
+import org.litepal.crud.DataSupport;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+import cn.iimedia.yq.Base.BaseActivity;
+import cn.iimedia.yq.Base.Config;
+import cn.iimedia.yq.Base.utils.ComponentsUtils;
+import cn.iimedia.yq.Base.utils.DLog;
+import cn.iimedia.yq.Base.utils.ELS;
+import cn.iimedia.yq.Base.utils.MyUtils;
+import cn.iimedia.yq.custom.QMUITipDialogWrapper;
+import cn.iimedia.yq.http.APIConstants;
+import cn.iimedia.yq.http.RequestEngine;
+import cn.iimedia.yq.http.bean.DatabaseBean.ProjectDatabase;
+import cn.iimedia.yq.http.bean.ResponseBean.CommonResponse;
+import cn.iimedia.yq.http.bean.ResponseBean.ProjectBean;
+import cn.iimedia.yq.http.bean.ResponseBean.RelatedWordBean;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class AddProjectActivity extends BaseActivity {
+    public static final String TAG = "AddProjectActivity";
+
+    @BindView(R.id.add_project_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.float_layout)
+    QMUIFloatLayout mFloatView;
+    @BindView(R.id.et_project_name)
+    EditText etName;
+    @BindView(R.id.btn_submit)
+    Button btnSubmit;
+
+    APIConstants apiConstants = null;
+    //    QMUITipDialog loadingSyncDialog;
+    QMUITipDialogWrapper loadingSyncDialog;
+    ELS els;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_add_project;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        apiConstants = RequestEngine.createService(APIConstants.class);
+        els = ELS.getInstance(this);
+        loadingSyncDialog = ComponentsUtils.getLoadingDialog(this, "正在同步数据库...");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        etName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (TextUtils.isEmpty(s)) return;
+                Call<RelatedWordBean> relatedWordCall = apiConstants.queryRelatedWord(s.toString());
+                relatedWordCall.enqueue(new Callback<RelatedWordBean>() {
+                    @Override
+                    public void onResponse(Call<RelatedWordBean> call, Response<RelatedWordBean> response) {
+                        if (EmptyUtils.isNotEmpty(response.body())) {
+                            RelatedWordBean relatedWordBean = response.body();
+                            MyUtils.reLogin(relatedWordBean.getLogin_error(), getBaseActivity());
+                            List<String> lists = response.body().getRecords();
+                            mFloatView.removeAllViews();
+                            if (lists.size() >= 15) {
+                                for (int i = 0; i < 15; i++) {
+                                    mFloatView.addView(createRelatedItem(lists.get(i)));
+                                }
+                            } else {
+                                for (String list2 : lists) {
+                                    mFloatView.addView(createRelatedItem(list2));
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RelatedWordBean> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    @OnClick(R.id.btn_submit)
+    public void submit(View v) {
+        final String name = etName.getText().toString();
+        DLog.w(TAG, "新建项目名:" + name);
+        if (EmptyUtils.isNotEmpty(name)) {
+            Call<CommonResponse> addProjectCall = apiConstants.addProject(3, name,
+                    name, "");
+            addProjectCall.enqueue(new Callback<CommonResponse>() {
+                @Override
+                public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response) {
+                    if (EmptyUtils.isNotEmpty(response.body())) {
+                        CommonResponse commonResponse = response.body();
+                        MyUtils.reLogin(commonResponse.getLogin_error(), getBaseActivity());
+                        //显示成功信息
+                        showToast(commonResponse.getMsg());
+                        if (commonResponse.getCode() == 0) {
+                            updateData();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<CommonResponse> call, Throwable t) {
+                    showToast("请求失败");
+                }
+            });
+        } else {
+            showToast("项目名不能为空");
+        }
+    }
+
+    //更新数据库
+    private void updateData() {
+        loadingSyncDialog.show();
+        Call<ProjectBean> projectCall = apiConstants.getCurrentProject(System.currentTimeMillis(), "desc");
+        projectCall.enqueue(new Callback<ProjectBean>() {
+            @Override
+            public void onResponse(Call<ProjectBean> call, Response<ProjectBean> response) {
+                //新建项目存入数据库
+                if (EmptyUtils.isNotEmpty(response.body())) {
+                    ProjectBean bean = response.body();
+                    MyUtils.reLogin(bean.getLogin_error(), getBaseActivity());
+                    if (bean.getRecords() != null) {
+//                        DataSupport.deleteAll(ProjectDatabase.class);
+                        List<ProjectBean.RecordsBean> recordsList = bean.getRecords();
+//                        List<ProjectDatabase> databaseList = new ArrayList<>();
+                        //项目数量更新
+                        els.saveIntData(ELS.CURRENT_TASK_COUNT, recordsList.size());
+                        for (int i = 0; i < recordsList.size(); i++) {
+                            ProjectBean.RecordsBean recordsBean = recordsList.get(i);
+                            List<ProjectDatabase> databaseList = DataSupport
+                                    .where("projectname = ?", recordsBean.getProjectname())
+                                    .find(ProjectDatabase.class);
+                            if (databaseList.size() == 0) {
+                                //数据库中不存在该数据,则新建一个
+                                ProjectDatabase projectDatabase = new ProjectDatabase();
+                                projectDatabase.setProject_id(recordsBean.getProject_id());
+                                projectDatabase.setProjectname(recordsBean.getProjectname());
+                                projectDatabase.save();
+                            } else {
+                                //数据库中存在该数据,则更新
+                                ProjectDatabase database = databaseList.get(0);
+                                database.setProject_id(recordsBean.getProject_id());
+                                database.setProjectname(recordsBean.getProjectname());
+                                database.save();
+                            }
+                        }
+                        sendBroadcast(new Intent(Config.ADD_PROJECT_ACTION));
+                        AddProjectActivity.this.finish();
+                    }
+                }
+                loadingSyncDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<ProjectBean> call, Throwable t) {
+                showToast("同步数据库失败");
+                loadingSyncDialog.dismiss();
+            }
+        });
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if (MyUtils.isShouldHideKeyboard(view, ev)) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context
+                        .INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    //新建相关词标签
+    private TextView createRelatedItem(final String text) {
+        TextView relatedItem = new TextView(this);
+        relatedItem.setBackgroundResource(R.drawable.related_item);
+        relatedItem.setTextSize(14f);
+        relatedItem.setText(text);
+        relatedItem.setTextColor(Color.WHITE);
+        relatedItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etName.setText(text);
+            }
+        });
+        return relatedItem;
+    }
+}

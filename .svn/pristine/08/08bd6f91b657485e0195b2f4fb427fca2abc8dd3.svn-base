@@ -1,0 +1,68 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.ext.target_version
+    buildToolsVersion rootProject.ext.build_version
+
+    defaultConfig {
+        applicationId "cn.iimedia.yq"
+        minSdkVersion rootProject.ext.min_version
+        targetSdkVersion rootProject.ext.target_version
+        versionCode rootProject.ext.code_version
+        versionName rootProject.ext.code_version_name
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile "com.android.support:appcompat-v7:$support_version"
+    compile "com.android.support:recyclerview-v7:$support_version"
+    compile "com.android.support:cardview-v7:$support_version"
+    compile "com.android.support:design:$support_version"
+    //    compile project(':chart')
+    compile(name: 'tablayout-release', ext: 'aar')
+    compile project(':model')
+    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
+    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    //GSON解析
+    compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+    compile "com.github.PhilJay:MPAndroidChart:$MPAndroidChart_version"
+    //制图工具
+    compile 'com.blankj:utilcode:1.9.10'
+    //工具库
+    compile 'com.jakewharton:butterknife:8.8.1'
+    //黄油刀
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    compile 'com.qmuiteam:qmui:1.0.4'
+    //优雅控件
+    compile 'com.github.pinguo-zhouwei:CustomPopwindow:2.1.1'
+    //封装的Popwindow
+    compile 'com.github.jdsjlzx:LRecyclerView:1.4.3'
+    //封装的RV
+    compile 'org.litepal.android:core:1.6.0'
+    //数据库封装
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.afollestad.material-dialogs:core:0.8.5.3'//对话框封装
+}
+repositories {
+    mavenCentral()
+}

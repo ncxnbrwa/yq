@@ -1,0 +1,57 @@
+package cn.iimedia.yq.Warning
+
+
+import android.view.View
+import cn.iimedia.yq.Base.BaseFragment
+import cn.iimedia.yq.R
+import kotlinx.android.synthetic.main.fragment_warning.*
+
+
+/**
+ * 舆情预警页面
+ */
+class FragmentWarning : BaseFragment(), View.OnClickListener {
+
+    companion object {
+        fun getInstance(): FragmentWarning {
+            val fragment = FragmentWarning()
+            return fragment
+        }
+    }
+
+    override fun init() {
+        initView()
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_warning
+    }
+
+    private fun initData() {
+
+    }
+
+    private fun initView() {
+        warning_toolbar.setTitle("13762915541")
+        warning_toolbar.setNavigationIcon(R.drawable.icon_user)
+
+        initData()
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser) {
+
+        } else {
+
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onClick(view: View) {
+
+    }
+}

@@ -1,0 +1,61 @@
+package cn.iimedia.yq.index
+
+
+import android.view.View
+import cn.iimedia.yq.Base.BaseFragment
+import cn.iimedia.yq.R
+import kotlinx.android.synthetic.main.fragment_index.*
+
+
+/**
+ * 热度指数页面
+ */
+class FragmentIndex : BaseFragment(), View.OnClickListener{
+    private var rootView: View? = null
+
+    companion object {
+
+        fun getInstance(): FragmentIndex {
+            val fragment = FragmentIndex()
+            return fragment
+        }
+    }
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_index
+    }
+
+    override fun init() {
+        initView()
+    }
+
+//    override fun lazyLoad() {
+//
+//    }
+
+    private fun initData() {
+
+    }
+
+    private fun initView() {
+        index_toolbar.setTitle("舆情热点")
+        index_toolbar.setNavigationIcon(R.drawable.icon_menu)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser) {
+        } else {
+
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onClick(view: View) {
+
+    }
+
+
+}

@@ -1,0 +1,62 @@
+package cn.iimedia.yq.Base.utils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+/**
+ * Created by iiMedia on 2017/12/12.
+ * 时间工具类
+ */
+
+public class TimeTypeUtils {
+    public static final String TAG = "TimeUtils";
+
+    //获取24h前的时间戳
+    public static long get24HourBeforeTimestamp() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, -1);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DLog.w(TAG, "24H:" + dateFormat.format(calendar.getTime()));
+        return calendar.getTimeInMillis();
+    }
+
+    //获取一周前的时间戳
+    public static long getWeekBeforeTimestamp() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, -7);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DLog.w(TAG, "一周:" + dateFormat.format(calendar.getTime()));
+        return calendar.getTimeInMillis();
+    }
+
+    //获取30天前的时间戳
+    public static long getMonthBeforeTimestamp() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MONTH, -1);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DLog.w(TAG, "30天:" + dateFormat.format(calendar.getTime()));
+        return calendar.getTimeInMillis();
+    }
+
+    //获取一天前0点的时间戳
+    public static long getDayBeforeTimestamp() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, -1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DLog.w(TAG, "一天:" + dateFormat.format(calendar.getTime()));
+        return calendar.getTimeInMillis();
+    }
+
+    //获取昨天24点的时间戳
+    public static long getDayBeforeEndTimestamp() {
+        return getDayBeforeTimestamp() + 24 * 60 * 60 * 1000;
+    }
+}

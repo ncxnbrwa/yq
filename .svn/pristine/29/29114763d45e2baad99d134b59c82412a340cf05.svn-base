@@ -1,0 +1,11 @@
+package cn.iimedia.yq.http.bean
+
+/**
+ * Created by iiMedia on 2017/11/9.
+ */
+data class User(
+        var code: Int,
+        var type: Int,
+        var nickName: String,
+        var create_time: String
+)

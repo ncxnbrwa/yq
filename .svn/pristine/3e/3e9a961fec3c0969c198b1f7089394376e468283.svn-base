@@ -1,0 +1,66 @@
+package cn.iimedia.yq.http;
+
+import cn.iimedia.yq.http.bean.ResponseBean.CommonResponse;
+import cn.iimedia.yq.http.bean.ResponseBean.NewsBean;
+import cn.iimedia.yq.http.bean.ResponseBean.ProjectBean;
+import cn.iimedia.yq.http.bean.ResponseBean.RelatedWordBean;
+import cn.iimedia.yq.http.bean.ResponseBean.User;
+import cn.iimedia.yq.http.bean.ResponseBean.UserWarningBean;
+import cn.iimedia.yq.http.bean.ResponseBean.WarningNewsBean;
+import retrofit2.Call;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+
+/**
+ * Created by iiMedia on 2017/11/9.
+ * API接口
+ */
+
+public interface APIConstants {
+
+    @POST(RequestEngine.LOGIN)
+    Call<User> login(@Query("j_username") String username,
+                     @Query("j_password") String password);
+
+    //按时间逆序 order：”desc”,按时间顺序不传,t尽量传时间戳
+    @POST(RequestEngine.GET_CURRENT_PROJECT)
+    Call<ProjectBean> getCurrentProject(@Query("t") long t,
+                                        @Query("order") String order);
+
+    //获取消息
+    @POST(RequestEngine.GET_NEWS)
+    Call<NewsBean> getNews(@Query("param") String param);
+
+    //添加项目
+    @POST(RequestEngine.ADD_PROJECT)
+    Call<CommonResponse> addProject(@Query("model") int model,//项目模型,传3即可
+                                    @Query("keyword") String keyword, //关键词
+                                    @Query("name") String name, //项目名
+                                    @Query("related_word") String related_word //关联词,项目模型为3时不需要传
+    );
+
+    //根据关键字查询关联词
+    @POST(RequestEngine.QUERY_RELATED_WORD)
+    Call<RelatedWordBean> queryRelatedWord(@Query("keyword") String keyword);
+
+    //拉取项目历史预警
+//    @POST(RequestEngine.GET_HISTOTY_WARNING)
+//    Call<UserWarningBean> getHistoryWarining(@Query("proj_id") int projectId, //项目id
+//                                             @Query("page_size") int pageSize, //每页大小
+//                                             @Query("page_num") int num //页码
+//    );
+
+    //拉取用户预警
+    @POST(RequestEngine.GET_USER_WARNING)
+    Call<UserWarningBean> getUserWarining(@Query("page_size") int pageSize, //每页大小
+                                          @Query("page_num") int num //页码
+    );
+
+    //预警详情新闻
+    @POST(RequestEngine.GET_WARNING_DETAIL_NEWS)
+    Call<WarningNewsBean> getWarningDetail(@Query("proj_id") int projectId, //项目id
+                                           @Query("dateline") String dateline, //时间戳
+                                           @Query("page_size") int pageSize, //每页大小
+                                           @Query("page_num") int num //页码
+    );
+}

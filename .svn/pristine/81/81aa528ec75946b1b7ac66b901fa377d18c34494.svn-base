@@ -1,0 +1,30 @@
+package cn.iimedia.yq.main
+
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.support.v4.app.FragmentActivity
+import cn.iimedia.model.data.DelegatesExt
+import cn.iimedia.yq.R
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.startActivity
+
+class SplashActivity : FragmentActivity() {
+    var uid: String by DelegatesExt.preference(this, "UID", "0")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash)
+
+        initUser()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            startActivity<MainActivity>()
+            this.finish()
+        }, 3000);
+    }
+
+    private fun initUser() = doAsync {
+
+    }
+}

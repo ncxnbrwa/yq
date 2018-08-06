@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/index_toolbar"
+            style="@style/AppBaseTheme.Toolbar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <RelativeLayout
+                android:id="@+id/rl_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/tv_logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="6dp"
+                    android:text="退出登录"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="8dp"
+                    android:layout_toRightOf="@+id/tv_logout"
+                    android:padding="8dp"
+                    android:src="@drawable/logout" />
+            </RelativeLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_type_level"
+                style="@style/mine_type_text"
+                android:text="账户等级" />
+
+            <TextView
+                android:id="@+id/tv_data_level"
+                style="@style/ming_data_text"
+                android:layout_toRightOf="@+id/tv_type_level"
+                tools:text="高级用户" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/dash_separate"
+            android:layerType="software" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_type_phone"
+                style="@style/mine_type_text"
+                android:text="手机号码" />
+
+            <TextView
+                android:id="@+id/tv_data_phone"
+                style="@style/ming_data_text"
+                android:layout_toRightOf="@+id/tv_type_phone"
+                tools:text="18395486257" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/dash_separate"
+            android:layerType="software" />
+
+        <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/tv_type_email"-->
+        <!--style="@style/mine_type_text"-->
+        <!--android:text="邮箱地址" />-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/tv_data_email"-->
+        <!--style="@style/ming_data_text"-->
+        <!--android:layout_toRightOf="@+id/tv_type_email"-->
+        <!--tools:text="5sda5d5@163.com" />-->
+        <!--</RelativeLayout>-->
+
+        <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@drawable/dash_separate" />-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_type_task"
+                style="@style/mine_type_text"
+                android:text="项目数量" />
+
+            <TextView
+                android:id="@+id/tv_data_task"
+                style="@style/ming_data_text"
+                android:layout_toRightOf="@+id/tv_type_task"
+                tools:text="35" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/dash_separate"
+            android:layerType="software" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_type_score"
+                style="@style/mine_type_text"
+                android:text="剩余积分" />
+
+            <TextView
+                android:id="@+id/tv_data_score"
+                style="@style/ming_data_text"
+                android:layout_toRightOf="@+id/tv_type_score"
+                tools:text="4260" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/dash_separate"
+            android:layerType="software" />
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

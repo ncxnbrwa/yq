@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <!--<TextView-->
+        <!--android:id="@+id/tv_emotion_all"-->
+        <!--style="@style/popwindow_plat_emotion"-->
+        <!--android:text="全部情感" />-->
+
+    <TextView
+        android:id="@+id/tv_emotion_positive"
+        style="@style/popwindow_plat_emotion"
+        android:text="正面" />
+
+    <TextView
+        android:id="@+id/tv_emotion_negative"
+        style="@style/popwindow_plat_emotion"
+        android:text="负面" />
+
+    <TextView
+        android:id="@+id/tv_emotion_neutral"
+        style="@style/popwindow_plat_emotion"
+        android:text="中立" />
+</LinearLayout>

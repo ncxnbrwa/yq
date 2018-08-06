@@ -1,0 +1,35 @@
+package cn.iimedia.yq.analyze
+
+import cn.iimedia.yq.Base.BaseFragment
+import cn.iimedia.yq.R
+import kotlinx.android.synthetic.main.fragment_analyze.*
+
+/**
+ * 来源分析界面
+ */
+class FragmentAnalyze : BaseFragment() {
+
+    companion object {
+        fun getInstance(): FragmentAnalyze {
+            val fragement = FragmentAnalyze()
+            return fragement
+        }
+    }
+
+//    override fun lazyLoad() {
+//
+//    }
+
+    override fun init() {
+        initView()
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_analyze
+    }
+
+    fun initView() {
+        analyze_toolbar.setTitle("舆情热点")
+        analyze_toolbar.setNavigationIcon(R.drawable.icon_menu)
+    }
+}

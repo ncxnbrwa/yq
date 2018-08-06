@@ -1,0 +1,28 @@
+package cn.iimedia.yq.http;
+
+import cn.iimedia.yq.http.bean.ResponseBean.NewsBean;
+import cn.iimedia.yq.http.bean.ResponseBean.ProjectBean;
+import cn.iimedia.yq.http.bean.ResponseBean.User;
+import retrofit2.Call;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+
+/**
+ * Created by iiMedia on 2017/11/9.
+ * API接口
+ */
+
+public interface APIConstants {
+
+    @POST(RequestEngine.LOGIN)
+    Call<User> login(@Query("j_username") String username,
+                     @Query("j_password") String password);
+
+    //按时间逆序 order：”desc”,按时间顺序不传,t尽量传时间戳
+    @POST(RequestEngine.GET_CURRENT_PROJECT)
+    Call<ProjectBean> getCurrentProject(@Query("t") long t,
+                                        @Query("order") String order);
+
+    @POST(RequestEngine.GET_NEWS)
+    Call<NewsBean> getNews(@Query("param") String param);
+}

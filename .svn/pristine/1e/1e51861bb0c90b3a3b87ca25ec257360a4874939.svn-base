@@ -1,0 +1,65 @@
+package cn.iimedia.yq.HomeNewsList.adapter;
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import cn.iimedia.yq.R;
+import cn.iimedia.yq.http.bean.ResponseBean.NewsListBean;
+
+/**
+ * Created by iiMedia on 2017/12/12.
+ * 消息adapter
+ */
+
+public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsViewHolder> {
+    List<NewsListBean> list;
+    LayoutInflater inflater;
+    Context context;
+
+    public NewsListAdapter(List<NewsListBean> list, Context context) {
+        this.list = list;
+        this.context = context;
+        inflater = LayoutInflater.from(context);
+    }
+
+    @Override
+    public NewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = inflater.inflate(R.layout.news_list_item, parent, false);
+        return new NewsViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(NewsViewHolder holder, int position) {
+        NewsListBean newsListBean = list.get(position);
+        holder.newsDetail.setText(newsListBean.getSummary());
+        holder.newsTime.setText(newsListBean.getRelease_time());
+        holder.newsTitle.setText(newsListBean.getTitle());
+    }
+
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
+    class NewsViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tv_news_time)
+        TextView newsTime;
+        @BindView(R.id.tv_news_detail)
+        TextView newsDetail;
+        @BindView(R.id.tv_news_title)
+        TextView newsTitle;
+
+        public NewsViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+}

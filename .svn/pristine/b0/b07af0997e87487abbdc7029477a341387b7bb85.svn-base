@@ -1,0 +1,42 @@
+package cn.iimedia.yq.custom.chart;
+
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+
+import cn.iimedia.yq.Base.Config;
+import cn.iimedia.yq.Base.YqApplication;
+import cn.iimedia.yq.Base.utils.DLog;
+import cn.iimedia.yq.Base.utils.ELS;
+import cn.iimedia.yq.Base.utils.TimeTypeUtils;
+
+/**
+ * Created by iiMedia on 2017/12/25.
+ * 热度指数横坐标格式
+ */
+
+public class HeatXFormatter implements IAxisValueFormatter {
+    @Override
+    public String getFormattedValue(float value, AxisBase axis) {
+        String valueStr = String.valueOf(value);
+        String str = valueStr.substring(valueStr.indexOf(".") + 1, valueStr.indexOf(".") + 2);
+        DLog.w(Config.LOG_TAG, "横坐标值:" + valueStr);
+        DLog.w(Config.LOG_TAG, "横坐标值截取:" + str);
+        if (!str.equals("0")) {
+            return "";
+        }
+        int valueInt = (int) value;
+        String timeRange = ELS.getInstance(YqApplication.getAppContext()).getStringData(ELS.TIME_RANGE);
+        switch (timeRange) {
+            case Config.TIME_24H:
+                return TimeTypeUtils.timeRange2Hour24H(valueInt);
+            case Config.TIME_YESTERDAY:
+                return TimeTypeUtils.timeRange2HourYesterday(valueInt);
+            case Config.TIME_WEEK:
+                return TimeTypeUtils.timeRange2Date(7, valueInt);
+            case Config.TIME_MONTH:
+                return TimeTypeUtils.timeRange2Date(30, valueInt);
+            default:
+                return String.valueOf(value);
+        }
+    }
+}

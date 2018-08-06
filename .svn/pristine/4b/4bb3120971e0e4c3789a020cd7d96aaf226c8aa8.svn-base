@@ -1,0 +1,12 @@
+package cn.iimedia.yq.http;
+
+/**
+ * Created by iiMedia on 2017/11/9.
+ * API接口
+ */
+
+public interface APIConstants {
+
+//    @POST("u/info")
+//    Call<User> login();
+}

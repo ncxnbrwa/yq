@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_plat_all"-->
+    <!--style="@style/popwindow_plat_emotion"-->
+    <!--android:text="全部平台" />-->
+
+    <TextView
+        android:id="@+id/tv_plat_web"
+        style="@style/popwindow_plat_emotion"
+        android:text="网页" />
+
+    <TextView
+        android:id="@+id/tv_plat_wechat"
+        style="@style/popwindow_plat_emotion"
+        android:text="微信" />
+
+    <TextView
+        android:id="@+id/tv_plat_weibo"
+        style="@style/popwindow_plat_emotion"
+        android:text="微博" />
+
+    <TextView
+        android:id="@+id/tv_plat_app"
+        style="@style/popwindow_plat_emotion"
+        android:text="APP" />
+
+    <TextView
+        android:id="@+id/tv_plat_forum"
+        style="@style/popwindow_plat_emotion"
+        android:text="论坛" />
+
+    <TextView
+        android:id="@+id/tv_plat_newspaper"
+        style="@style/popwindow_plat_emotion"
+        android:text="报刊" />
+
+    <TextView
+        android:id="@+id/tv_plat_video"
+        style="@style/popwindow_plat_emotion"
+        android:text="视频" />
+</LinearLayout>

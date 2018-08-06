@@ -1,0 +1,58 @@
+package cn.iimedia.yq
+
+import android.content.Context
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import cn.iimedia.yq.Base.BaseActivity
+import cn.iimedia.yq.HotNewsList.FragmentHotNews
+import cn.iimedia.yq.Warning.FragmentWarning
+import cn.iimedia.yq.analyze.FragmentAnalyze
+import cn.iimedia.yq.index.FragmentIndex
+import com.flyco.tablayout.entity.TabEntity
+import com.flyco.tablayout.listener.CustomTabEntity
+import com.flyco.tablayout.listener.OnTabSelectListener
+import kotlinx.android.synthetic.main.activity_main.*
+
+
+class MainActivity : BaseActivity() {
+    override fun getLayoutId(): Int {
+        return R.layout.activity_main
+    }
+
+    private val mContext: Context = this
+    private val mFragments: ArrayList<Fragment> = ArrayList()
+
+    private val mTitles: ArrayList<String> = arrayListOf("舆情热点", "热度指数", "来源分析", "最新预警")
+    private val mIconUnselectIds = intArrayOf(R.drawable.bottom_hot, R.drawable.bottom_index,
+            R.drawable.bottom_analyze, R.drawable.bottom_warning)
+    private val mIconSelectIds = intArrayOf(R.drawable.bottom_hot_1, R.drawable.bottom_index_1,
+            R.drawable.bottom_analyze_1, R.drawable.bottom_warning_1)
+    private val mTabEntities = ArrayList<CustomTabEntity>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val bundle = Bundle()
+        bundle.putString("uid", "0")
+        bundle.putString("cid", "0")
+        mFragments.add(FragmentHotNews.getInstance(bundle))
+        mFragments.add(FragmentIndex.getInstance())
+        mFragments.add(FragmentAnalyze.getInstance())
+        mFragments.add(FragmentWarning.getInstance())
+
+        for (i in mTitles.indices) {
+            mTabEntities.add(TabEntity(mTitles[i], mIconSelectIds[i], mIconUnselectIds[i]))
+        }
+        tabs.setTabData(mTabEntities, this, R.id.content, mFragments)
+        tabs.setOnTabSelectListener(object : OnTabSelectListener {
+            override fun onTabSelect(current: Int) {
+                val last = tabs.getLastTab()
+                if (last != current) {
+                    mFragments[current].userVisibleHint = true
+                    mFragments[last].userVisibleHint = false
+                }
+            }
+
+            override fun onTabReselect(position: Int) {}
+        })
+    }
+}

@@ -1,0 +1,14 @@
+package cn.iimedia.yq.http;
+
+/**
+ * Created by iiMedia on 2017/11/9.
+ */
+
+public class RequestEngine {
+    public static final String HOST = "http://yq.iimedia.cn/";
+//    public static final String HOST = "http://testyq.iimedia.cn/";
+    public static final String LOGIN = HOST + "home/login";
+
+//    Retrofit retrofit = new Retrofit.Builder()
+//            .baseUrl(HOST)
+}

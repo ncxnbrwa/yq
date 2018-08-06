@@ -1,0 +1,33 @@
+package cn.iimedia.yq.analyze;
+
+import cn.iimedia.yq.Base.BaseFragment;
+import cn.iimedia.yq.R;
+
+/**
+ * Created by iiMedia on 2017/12/20.
+ * 媒体占比
+ */
+
+public class FragmentMediaRatio extends BaseFragment {
+
+    public static FragmentMediaRatio getInstance() {
+        FragmentMediaRatio fragmentMediaRatio = new FragmentMediaRatio();
+        return fragmentMediaRatio;
+    }
+
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_media_ratio;
+    }
+
+    @Override
+    protected void init() {
+
+    }
+
+    @Override
+    protected void lazyLoad() {
+
+    }
+}

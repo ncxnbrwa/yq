@@ -1,0 +1,42 @@
+package cn.iimedia.yq.custom;
+
+import android.content.Context;
+import android.widget.TextView;
+
+import com.github.mikephil.charting.components.MarkerView;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
+
+import cn.iimedia.yq.Base.utils.MyUtils;
+import cn.iimedia.yq.R;
+
+/**
+ * Created by iiMedia on 2017/12/25.
+ * 情感趋势图表标记
+ */
+
+public class EmoTrendMarkerView extends MarkerView {
+    TextView tvContent1, tvContent2, tvContent3, tvContent4;
+
+    public EmoTrendMarkerView(Context context) {
+        super(context, R.layout.emo_trend_marker_view);
+        tvContent1 = (TextView) findViewById(R.id.chart_emo_trend_content);
+        tvContent2 = (TextView) findViewById(R.id.chart_emo_trend_content2);
+        tvContent3 = (TextView) findViewById(R.id.chart_emo_trend_content3);
+        tvContent4 = (TextView) findViewById(R.id.chart_emo_trend_content4);
+    }
+
+    @Override
+    public void refreshContent(Entry e, Highlight highlight) {
+        BarEntry entry = (BarEntry) e;
+        float[] yVal = entry.getYVals();
+        float fumianVal = -yVal[0];
+        float sum = fumianVal + yVal[1] + yVal[2];
+        tvContent1.setText(e.getData().toString());
+        tvContent4.setText(MyUtils.formatted2Percentage(fumianVal / sum) + " 负面:" + (int) fumianVal);
+        tvContent2.setText(MyUtils.formatted2Percentage(yVal[1] / sum) + " 正面:" + (int) yVal[1]);
+        tvContent3.setText(MyUtils.formatted2Percentage(yVal[2] / sum) + " 中立:" + (int) yVal[2]);
+        super.refreshContent(e, highlight);
+    }
+}

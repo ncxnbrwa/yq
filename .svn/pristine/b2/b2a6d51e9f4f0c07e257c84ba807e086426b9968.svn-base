@@ -1,0 +1,32 @@
+package cn.iimedia.yq.analyze;
+
+import cn.iimedia.yq.Base.BaseFragment;
+import cn.iimedia.yq.R;
+
+/**
+ * Created by iiMedia on 2017/12/20.
+ * 热度指数
+ */
+
+public class FragmentHeat extends BaseFragment {
+
+    public static FragmentHeat getInstance() {
+        FragmentHeat fragmentHeat = new FragmentHeat();
+        return fragmentHeat;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_heat;
+    }
+
+    @Override
+    protected void init() {
+
+    }
+
+    @Override
+    protected void lazyLoad() {
+
+    }
+}

@@ -1,0 +1,64 @@
+package cn.iimedia.yq.HomeNewsList;
+
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+import com.github.jdsjlzx.recyclerview.LRecyclerView;
+import com.qmuiteam.qmui.widget.QMUIEmptyView;
+
+import butterknife.BindView;
+import cn.iimedia.yq.Base.BaseActivity;
+import cn.iimedia.yq.R;
+import cn.iimedia.yq.http.APIConstants;
+import cn.iimedia.yq.http.RequestEngine;
+
+public class ProjectManagerActivity extends BaseActivity {
+    @BindView(R.id.project_manager_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.rv_project_list)
+    LRecyclerView rvProjectList;
+    @BindView(R.id.empty_view)
+    QMUIEmptyView mEmptyView;
+    @BindView(R.id.fab_add_project)
+    FloatingActionButton btnAddProject;
+
+    APIConstants apiConstants = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        apiConstants = RequestEngine.createService(APIConstants.class);
+        toolbar.setTitle("乐视股份");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        loadData();
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_project_manager;
+    }
+
+    private void loadData() {
+        mEmptyView.show(true);
+//        Call<ProjectBean> projectCall = apiConstants.getCurrentProject(System.currentTimeMillis(), "desc");
+//        projectCall.enqueue(new Callback<ProjectBean>() {
+//            @Override
+//            public void onResponse(Call<ProjectBean> call, Response<ProjectBean> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ProjectBean> call, Throwable t) {
+//
+//            }
+//        });
+    }
+}

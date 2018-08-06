@@ -1,0 +1,32 @@
+package cn.iimedia.yq.analyze;
+
+import cn.iimedia.yq.Base.BaseFragment;
+import cn.iimedia.yq.R;
+
+/**
+ * Created by iiMedia on 2017/12/21.
+ * 情感走势
+ */
+
+public class FragmentEmotionTrend extends BaseFragment {
+
+    public static FragmentEmotionTrend getInstance() {
+        FragmentEmotionTrend fragmentEmotion = new FragmentEmotionTrend();
+        return fragmentEmotion;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragemnt_emo_trend;
+    }
+
+    @Override
+    protected void init() {
+
+    }
+
+    @Override
+    protected void lazyLoad() {
+
+    }
+}

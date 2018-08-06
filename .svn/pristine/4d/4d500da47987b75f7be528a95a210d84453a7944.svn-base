@@ -1,0 +1,88 @@
+package cn.iimedia.yq.Warning.adapter;
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import cn.iimedia.yq.R;
+import cn.iimedia.yq.http.bean.ResponseBean.UserWarningRecordsList;
+
+/**
+ * Created by iiMedia on 2017/11/9.
+ * 预警adapter
+ */
+
+public class WarningListAdapter extends RecyclerView.Adapter<WarningListAdapter.WarningViewHolder> {
+    List<UserWarningRecordsList> list;
+    Context context;
+    LayoutInflater inflater;
+
+    public WarningListAdapter(List<UserWarningRecordsList> list, Context context) {
+        this.list = list;
+        this.context = context;
+        inflater = LayoutInflater.from(context);
+    }
+
+    @Override
+    public WarningListAdapter.WarningViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = inflater.inflate(R.layout.warning_list_item, parent, false);
+        return new WarningViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(WarningListAdapter.WarningViewHolder holder, int position) {
+        UserWarningRecordsList warningRecordsBean = list.get(position);
+        //1-黄色 2-橙色 3-红色
+        int colorInt = warningRecordsBean.getWarning_level();
+        switch (colorInt) {
+            case 1:
+                holder.tvColor.setText("黄色预警");
+                holder.ivWarning.setImageResource(R.drawable.icon_yellow_warning);
+                break;
+            case 2:
+                holder.tvColor.setText("橙色预警");
+                holder.ivWarning.setImageResource(R.drawable.icon_orange_warning);
+                break;
+            case 3:
+                holder.tvColor.setText("红色预警");
+                holder.ivWarning.setImageResource(R.drawable.icon_red_warning);
+                break;
+        }
+        holder.tvDetail.setText(warningRecordsBean.getProj_name());
+        //时间戳化为所需格式
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(warningRecordsBean.getDateline() * 1000);
+        holder.tvTime.setText(sdf.format(date));
+    }
+
+    @Override
+    public int getItemCount() {
+        return list == null ? 0 : list.size();
+    }
+
+    class WarningViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.iv_warning)
+        ImageView ivWarning;
+        @BindView(R.id.tv_warning_color)
+        TextView tvColor;
+        @BindView(R.id.tv_warning_time)
+        TextView tvTime;
+        @BindView(R.id.tv_warning_name)
+        TextView tvDetail;
+
+        public WarningViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+}

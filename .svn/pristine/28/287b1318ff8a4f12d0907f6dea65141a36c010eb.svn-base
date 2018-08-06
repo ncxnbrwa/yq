@@ -1,0 +1,155 @@
+package cn.iimedia.yq;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.EmptyUtils;
+import com.blankj.utilcode.util.RegexUtils;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+import cn.iimedia.yq.Base.BaseActivity;
+import cn.iimedia.yq.Base.YqApplication;
+import cn.iimedia.yq.Base.utils.ComponentsUtils;
+import cn.iimedia.yq.Base.utils.DLog;
+import cn.iimedia.yq.Base.utils.ELS;
+import cn.iimedia.yq.Base.utils.MyUtils;
+import cn.iimedia.yq.http.APIConstants;
+import cn.iimedia.yq.http.CookiesReceiverInterceptor;
+import cn.iimedia.yq.http.RequestEngine;
+import cn.iimedia.yq.http.bean.ResponseBean.User;
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+/**
+ * Created by iiMedia on 2017/11/9.
+ * 登录界面
+ */
+
+public class LoginActivity extends BaseActivity {
+    public static final String TAG = "LoginActivity";
+    ELS els;
+
+    @BindView(R.id.et_phone)
+    EditText etPhone;
+    @BindView(R.id.et_password)
+    EditText etPassword;
+    @BindView(R.id.btn_login)
+    Button btnLogin;
+    APIConstants apiConstants = null;
+    QMUITipDialog loadingDialog;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_login;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setSwipeBackEnable(false);
+        els = ELS.getInstance(YqApplication.getAppContext());
+        loadingDialog = ComponentsUtils.getLoadingDialog(this, "正在登录");
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(RequestEngine.getHttpLoggingInterceptor())
+                .addInterceptor(new CookiesReceiverInterceptor())
+//                .addInterceptor(new CookiesAddInterceptor())
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(RequestEngine.HOST)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+
+        apiConstants = retrofit.create(APIConstants.class);
+//        apiConstants = RequestEngine.createService(APIConstants.class);
+    }
+
+    @OnClick(R.id.btn_login)
+    public void onClick(View view) {
+        final String phoneStr = etPhone.getText().toString();
+        String passStr = etPassword.getText().toString();
+        if (!TextUtils.isEmpty(phoneStr)) {
+            if (RegexUtils.isMobileExact(phoneStr)) {
+                if (!TextUtils.isEmpty(passStr)) {
+
+                } else {
+                    showToast("密码不能为空");
+                    return;
+                }
+            } else {
+                showToast("请输入正确的手机号码");
+                return;
+            }
+        } else {
+            showToast("手机号不能为空");
+            return;
+        }
+
+        //登录接口
+        Call<User> loginCall = apiConstants.login(phoneStr, passStr);
+        loadingDialog.show();
+        loginCall.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (EmptyUtils.isNotEmpty(response.body())) {
+                    User user = response.body();
+                    if (user.getLogin_error() == 0) {
+                        els.saveStringData(ELS.USERNAME, phoneStr);
+                        ActivityUtils.startActivity(MainActivity.class);
+                        finish();
+                        showToast("登录成功");
+                    } else if (user.getLogin_error() == 2) {
+                        showToast("用户账号已过期");
+                    } else {
+                        showToast("用户账号或密码错误");
+                    }
+                }
+                loadingDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                loadingDialog.dismiss();
+                DLog.w(TAG, "登录失败信息:" + t.getMessage());
+                showToast("登录失败");
+            }
+        });
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View view = getCurrentFocus();
+            if (MyUtils.isShouldHideKeyboard(view, ev)) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context
+                        .INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+//    @Override
+//    public void onBackPressedSupport() {
+//        mElfApp.finishApplication();
+//    }
+}

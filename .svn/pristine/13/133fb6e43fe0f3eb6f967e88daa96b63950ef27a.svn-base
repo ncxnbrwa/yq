@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/loginbg"
+    tools:context="cn.iimedia.yq.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="150dp" />
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/login_logo" />
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="42dp"
+            android:background="@drawable/login_edit_background"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:padding="10dp"
+                android:src="@drawable/login_phone" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/white" />
+
+            <com.chaychan.viewlib.PowerfulEditText
+                android:id="@+id/et_phone"
+                style="@style/edit_login"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="请输入手机号"
+                android:inputType="phone"
+                app:funcType="canClear"
+                app:rightDrawableHeight="15dp"
+                app:rightDrawableWidth="15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/login_edit_background"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:padding="10dp"
+                android:src="@drawable/login_psw" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/white" />
+
+            <com.chaychan.viewlib.PowerfulEditText
+                android:id="@+id/et_password"
+                style="@style/edit_login"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="请输入密码"
+                android:inputType="textPassword"
+                app:funcType="canClear"
+                app:rightDrawableHeight="15dp"
+                app:rightDrawableWidth="15dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_login"
+            style="@style/button_login"
+            android:layout_marginTop="12dp"
+            android:text="手机登录" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_horizontal"
+            android:text="艾媒大数据舆情管控系统"
+            android:textColor="@color/primary_text_color"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="iiMedia BigData Public Sentiment Supervise System"
+            android:textColor="@color/primary_text_color"
+            android:textSize="12sp" />
+    </LinearLayout>
+</RelativeLayout>

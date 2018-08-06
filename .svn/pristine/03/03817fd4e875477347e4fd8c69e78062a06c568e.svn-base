@@ -1,0 +1,50 @@
+package cn.iimedia.yq.NewsList.adapter
+
+import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.View
+import android.view.View.GONE
+import android.view.ViewGroup
+import cn.iimedia.model.entity.News
+import cn.iimedia.yq.R
+import kotlinx.android.synthetic.main.news_item_no_img.view.*
+
+class NewsListAdapter(val list: ArrayList<News>, val itemClickListener: (News) -> Unit) : RecyclerView.Adapter<NewsListAdapter.ViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.swipe_item_no_img, parent, false)
+        return ViewHolderNoImg(view, itemClickListener)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(list[position])
+    }
+
+    override fun getItemCount(): Int = list.size
+
+    override fun getItemViewType(position: Int): Int {
+        return TYPE_NO_IMG
+    }
+
+    /**
+     * ViewHolder impl
+     */
+    val TYPE_NO_IMG = 0
+
+    open class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        open fun bind(news: News) {}
+    }
+
+    class ViewHolderNoImg(view: View, val itemClickListener: (News) -> Unit) : ViewHolder(view) {
+        override fun bind(news: News) {
+            with(news) {
+                itemView.title.text = news.title
+                if (!TextUtils.equals(news.summary, "")) {
+                    itemView.desc.text = news.summary
+                } else itemView.desc.visibility = GONE
+                itemView.setOnClickListener { itemClickListener(this) }
+            }
+        }
+    }
+}

@@ -1,0 +1,136 @@
+package cn.iimedia.yq.HotNewsList
+
+
+import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.View
+import cn.iimedia.model.entity.News
+import cn.iimedia.yq.Base.BaseFragment
+import cn.iimedia.yq.HotNewsList.adapter.HotNewsListAdapter
+import cn.iimedia.yq.R
+import kotlinx.android.synthetic.main.fragment_hot_news.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
+import java.lang.Thread.sleep
+
+
+/**
+ * 舆情热点页面
+ */
+class FragmentHotNews : BaseFragment(), View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+    private var uid: String = "0"
+
+    private var cid: String = "0"
+
+    private var mNewsList: ArrayList<News> = ArrayList()
+    private var index: Int = 0
+    private var isLoading: Boolean = false
+
+    companion object {
+
+        fun getInstance(bundle: Bundle): FragmentHotNews {
+            val fragment = FragmentHotNews()
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
+    override fun init() {
+        initView()
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_hot_news
+    }
+
+    private fun initData(args: Bundle) {
+        uid = args.getString("uid")
+        cid = args.getString("cid")
+        loadNews(uid, cid)
+    }
+
+    private fun initView() {
+        hot_news_toolbar.setTitle("舆情热点")
+        hot_news_toolbar.setNavigationIcon(R.drawable.icon_menu)
+        swipeRefreshLayout.setOnRefreshListener(this)
+
+        //RecyclerView的一些初始化
+        val mLayoutManager = LinearLayoutManager(activity)
+        newsList.layoutManager = mLayoutManager
+        newsList.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val visibleItemCount = mLayoutManager.getChildCount()
+                val totalItemCount = mLayoutManager.getItemCount()
+                val pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition()
+
+                if (visibleItemCount + pastVisiblesItems >= totalItemCount - 3) {
+                    loadMore(uid, cid)
+                }
+            }
+        })
+        initData(arguments)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser) {
+
+        } else {
+
+        }
+    }
+
+    override fun onClick(view: View) {
+
+    }
+
+    override fun onRefresh() {
+        refresh(uid, cid)
+    }
+
+    private fun loadNews(uid: String, cid: String) = doAsync {
+        if (isLoading) return@doAsync else isLoading = true
+
+        while (index < 30) {
+            mNewsList.add(News("Title $index", "Summary $index"))
+            index++
+        }
+        uiThread {
+            newsList.adapter = HotNewsListAdapter(mNewsList) {
+                activity.toast(it.title)
+            }
+            isLoading = false
+        }
+    }
+
+    private fun loadMore(uid: String, cid: String) = doAsync {
+        if (isLoading) return@doAsync else isLoading = true
+
+        sleep(1000)
+        val target = index + 10
+        while (index < target) {
+            mNewsList.add(News("Title $index", "Summary $index"))
+            index++
+        }
+        uiThread {
+            newsList.adapter.notifyDataSetChanged()
+            isLoading = false
+        }
+    }
+
+    private fun refresh(uid: String, cid: String) = doAsync {
+        if (isLoading) return@doAsync else isLoading = true
+
+        sleep(2000)
+        uiThread {
+            newsList.adapter.notifyDataSetChanged()
+            swipeRefreshLayout?.isRefreshing = false
+            isLoading = false
+        }
+    }
+}

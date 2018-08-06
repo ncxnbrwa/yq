@@ -1,0 +1,52 @@
+package cn.iimedia.yq.activity
+
+import android.content.Context
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
+import cn.iimedia.yq.R
+import cn.iimedia.yq.fragment.FragmentMine
+import cn.iimedia.yq.fragment.FragmentMonitor
+import cn.iimedia.yq.fragment.FragmentNewsList
+import com.flyco.tablayout.entity.TabEntity
+import com.flyco.tablayout.listener.CustomTabEntity
+import com.flyco.tablayout.listener.OnTabSelectListener
+import kotlinx.android.synthetic.main.activity_main.*
+
+
+class MainActivity : FragmentActivity() {
+    private val mContext: Context = this
+    private val mFragments: ArrayList<Fragment> = ArrayList()
+
+    private val mTitles: ArrayList<String> = arrayListOf("舆情热点", "监控大厅", "我的")
+    private val mIconUnselectIds = intArrayOf(R.drawable.t_news, R.drawable.t_video, R.drawable.t_user)
+    private val mIconSelectIds = intArrayOf(R.drawable.t_news_1, R.drawable.t_video_1, R.drawable.t_user_1)
+    private val mTabEntities = ArrayList<CustomTabEntity>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val bundle = Bundle()
+        bundle.putString("uid", "0")
+        bundle.putString("cid", "0")
+        mFragments.add(FragmentNewsList.getInstance(bundle))
+        mFragments.add(FragmentMonitor.getInstance())
+        mFragments.add(FragmentMine.getInstance())
+
+        for (i in mTitles.indices) {
+            mTabEntities.add(TabEntity(mTitles[i], mIconSelectIds[i], mIconUnselectIds[i]))
+        }
+        tabs.setTabData(mTabEntities, this, R.id.content, mFragments)
+        tabs.setOnTabSelectListener(object : OnTabSelectListener {
+            override fun onTabSelect(current: Int) {
+                val last = tabs.getLastTab()
+                if(last != current) {
+                    mFragments[current].userVisibleHint = true
+                    mFragments[last].userVisibleHint = false
+                }
+            }
+            override fun onTabReselect(position: Int) {  }
+        })
+    }
+}

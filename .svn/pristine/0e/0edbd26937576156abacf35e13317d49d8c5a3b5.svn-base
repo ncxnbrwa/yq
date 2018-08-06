@@ -1,0 +1,224 @@
+package cn.iimedia.yq.analyze;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.widget.LinearLayout;
+
+import com.blankj.utilcode.util.EmptyUtils;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import cn.iimedia.yq.Base.BaseFragment;
+import cn.iimedia.yq.Base.Config;
+import cn.iimedia.yq.Base.utils.ComponentsUtils;
+import cn.iimedia.yq.Base.utils.ELS;
+import cn.iimedia.yq.Base.utils.TimeTypeUtils;
+import cn.iimedia.yq.R;
+import cn.iimedia.yq.custom.PieMarkerView;
+import cn.iimedia.yq.http.APIConstants;
+import cn.iimedia.yq.http.RequestEngine;
+import cn.iimedia.yq.http.bean.ResponseBean.EmoRatioBean;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+/**
+ * Created by iiMedia on 2017/12/21.
+ * 情感比例
+ */
+
+public class FragmentEmoRatio extends BaseFragment implements OnChartValueSelectedListener {
+    @BindView(R.id.emo_ratio_root)
+    LinearLayout mRootView;
+    @BindView(R.id.emp_ratio_chart)
+    PieChart pieChart;
+
+    APIConstants apiConstants;
+    ELS els;
+    List<PieEntry> entries = new ArrayList<>();
+    QMUITipDialog loadingDialog;
+    PieMarkerView markerView;
+    EmoChangeProjectReceiver receiver;
+
+    public static FragmentEmoRatio getInstance() {
+        FragmentEmoRatio fragment = new FragmentEmoRatio();
+        return fragment;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_emo_ratio;
+    }
+
+    @Override
+    protected void init() {
+        apiConstants = RequestEngine.createService(APIConstants.class);
+        els = ELS.getInstance(getBaseActivity());
+        loadingDialog = ComponentsUtils.getLoadingDialog(getBaseActivity(), "加载中");
+        markerView = new PieMarkerView(getBaseActivity());
+        markerView.setChartView(pieChart);
+        pieChart.setMarker(markerView);
+        //设置饼图不空心
+        pieChart.setDrawHoleEnabled(false);
+        //设置不能转
+        pieChart.setRotationEnabled(false);
+        //设置动画
+        pieChart.animateXY(1200, 1200);
+        //去掉描述
+        pieChart.getDescription().setEnabled(false);
+        //设置图表padding
+        pieChart.setExtraOffsets(30.f, 0.f, 30.f, 0.f);
+        //设置标签文字颜色
+        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setEntryLabelTextSize(14f);
+        pieChart.setDrawEntryLabels(false);
+        pieChart.setOnChartValueSelectedListener(this);
+        //设置图例
+        Legend l = pieChart.getLegend();
+        //居中
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        //方向
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setTextSize(14f);
+        l.setXEntrySpace(8f);
+        l.setYOffset(12f);
+        //设置图形大小
+        l.setFormSize(14f);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        IntentFilter filter = new IntentFilter(Config.CHOOSE_PROJECT_ACTION);
+        receiver = new EmoChangeProjectReceiver();
+        getBaseActivity().registerReceiver(receiver, filter);
+//        loadData();
+    }
+
+    @Override
+    protected void lazyLoad() {
+        loadData();
+    }
+
+    private void loadData() {
+        loadingDialog.show();
+        if (EmptyUtils.isNotEmpty(entries)) {
+            entries.clear();
+        }
+        String dateStart = TimeTypeUtils.timestamp2String6(TimeTypeUtils.getWeekBeforeTimestamp(), false);
+        String dteEnd = TimeTypeUtils.timestamp2String6(System.currentTimeMillis(), false);
+        String date = dateStart + "-" + dteEnd;
+        Call<EmoRatioBean> emoRatioCall = apiConstants.getEmoRatio(date, Config.TIME_WEEK,
+                els.getIntData(ELS.CURRENT_TASK_ID));
+        emoRatioCall.enqueue(new Callback<EmoRatioBean>() {
+            @Override
+            public void onResponse(Call<EmoRatioBean> call, Response<EmoRatioBean> response) {
+                if (EmptyUtils.isNotEmpty(response.body())) {
+                    EmoRatioBean ratioBean = response.body();
+                    if (EmptyUtils.isNotEmpty(ratioBean.getRecords())) {
+                        List<EmoRatioBean.RecordsBean> list = ratioBean.getRecords();
+                        if (EmptyUtils.isNotEmpty(list)) {
+                            setPieData(list);
+                        }
+                    }
+                }
+                if (EmptyUtils.isNotEmpty(loadingDialog) && loadingDialog.isShowing()) {
+                    loadingDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EmoRatioBean> call, Throwable t) {
+                showToast("情感比例获取失败");
+                if (EmptyUtils.isNotEmpty(loadingDialog) && loadingDialog.isShowing()) {
+                    loadingDialog.dismiss();
+                }
+            }
+        });
+    }
+
+    //填充图表数据
+    private void setPieData(List<EmoRatioBean.RecordsBean> list) {
+        List<Integer> colors = new ArrayList<>();
+        for (EmoRatioBean.RecordsBean list2 : list) {
+            entries.add(new PieEntry(list2.getValue(), list2.getName(), list2.getRate()));
+            colors.add(Color.parseColor(list2.getColor()));
+        }
+        removeRepeat(entries);
+        PieDataSet dataSet = new PieDataSet(entries, "");
+        //设置颜色
+        dataSet.setColors(colors);
+        //设置数值不显示
+        dataSet.setDrawValues(false);
+//        //设置指示线颜色
+//        dataSet.setValueLineColor(getBaseActivity().getResources().getColor(R.color.colorPrimary));
+//        //折线偏移角度,默认值75.f
+////        dataSet.setValueLinePart1OffsetPercentage(80.f);
+//        //设置折线长度,默认0.3f
+//        dataSet.setValueLinePart1Length(0.5f);
+//        //设置直线长度,默认0.4f
+//        dataSet.setValueLinePart2Length(0.8f);
+//        //设置数据在图外
+//        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+
+        PieData data = new PieData(dataSet);
+        data.setValueTextSize(14f);
+        pieChart.setData(data);
+        pieChart.invalidate();
+    }
+
+    @Override
+    public void onValueSelected(Entry e, Highlight h) {
+        if (e == null)
+            return;
+    }
+
+    @Override
+    public void onNothingSelected() {
+
+    }
+
+    //去重
+    private void removeRepeat(List<PieEntry> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).getLabel().equals(list.get(i).getLabel())) {
+                    list.remove(list.get(j));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getBaseActivity().unregisterReceiver(receiver);
+    }
+
+    private class EmoChangeProjectReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Config.CHOOSE_PROJECT_ACTION)) {
+                loadData();
+            }
+        }
+    }
+
+}

@@ -1,0 +1,58 @@
+package cn.iimedia.yq.Base.utils;
+
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.ToastUtils;
+
+import java.util.List;
+
+import cn.iimedia.yq.Base.BaseActivity;
+import cn.iimedia.yq.Base.Config;
+import cn.iimedia.yq.LoginActivity;
+
+/**
+ * Created by iiMedia on 2017/12/14.
+ * 常用工具类
+ */
+
+public class MyUtils {
+    //失效重新登录
+    public static void reLogin(int login_error, BaseActivity activity) {
+        if (login_error == 2) {
+            ToastUtils.showShort("登录失效,请重新登录");
+            activity.mElfApp.finishApplication();
+            ELS.getInstance(activity).clearUserInfo();
+            ActivityUtils.startActivity(activity, LoginActivity.class);
+        }
+    }
+
+    //检测某APP是否安装
+    public static boolean isAppInstalled(Context context, String packageName) {
+        boolean isInstall = false;
+        PackageManager pm = context.getPackageManager();
+        List<PackageInfo> packageInfoList = pm.getInstalledPackages(PackageManager.GET_META_DATA);
+        for (PackageInfo info : packageInfoList) {
+            if (info.packageName.equalsIgnoreCase(packageName)) {
+                isInstall = true;
+            }
+        }
+        return isInstall;
+    }
+
+    //跳转微信
+    public static void intentToWechat(BaseActivity activity) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.setComponent(new ComponentName(Config.WEXIN_PACKAGE,
+                Config.WEXIN_HOME_CLASS));
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivityForResult(intent, 0);
+    }
+
+}

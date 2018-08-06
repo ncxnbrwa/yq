@@ -1,0 +1,325 @@
+package cn.iimedia.yq.HomeNewsList;
+
+import android.graphics.Bitmap;
+import android.graphics.PixelFormat;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+
+import com.blankj.utilcode.util.EmptyUtils;
+import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebSettings;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
+
+import butterknife.BindView;
+import cn.iimedia.yq.Base.BaseActivity;
+import cn.iimedia.yq.Base.Config;
+import cn.iimedia.yq.Base.utils.DLog;
+import cn.iimedia.yq.R;
+
+public class WebDetailsActivity extends BaseActivity {
+    public static final String TAG = "NewsDetailsActivity";
+
+    @BindView(R.id.root_view)
+    LinearLayout mRootView;
+    @BindView(R.id.news_detail_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.web_progress)
+    ProgressBar progressBar;
+    //    @BindView(R.id.webview)
+//    WebView mWebView;
+    @BindView(R.id.tx_webview)
+    WebView txWebView;
+
+    String srcUrl;
+    WebSettings webSet;
+//    float oldFirstX = 0, oldFirstY = 0, oldSecondX = 0, oldSecondY = 0,
+//            newFirstX = 0, newFirstY = 0, newSecondX = 0, newSecondY = 0;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_news_details;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        //获取传值
+        Bundle bundle = getIntent().getExtras();
+        if (EmptyUtils.isNotEmpty(bundle.getString(Config.LOAD_URL))) {
+            srcUrl = bundle.getString(Config.LOAD_URL);
+            DLog.w(TAG, "加载url:" + srcUrl);
+        }
+
+        getWindow().setFormat(PixelFormat.TRANSLUCENT);
+        webSet = txWebView.getSettings();
+        //设置WebView参数
+        webSet.setUseWideViewPort(true);
+        webSet.setJavaScriptEnabled(true);
+        //设置可以由JavaScript打开新窗口
+        webSet.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSet.setGeolocationEnabled(true);
+        webSet.setAllowContentAccess(true);
+        //允许WebView访问文件数据
+        webSet.setAllowFileAccess(true);
+        //启用应用缓存
+        webSet.setAppCacheEnabled(true);
+        //启用DOM缓存
+        webSet.setDomStorageEnabled(true);
+        //启用数据库缓存
+        webSet.setDatabaseEnabled(true);
+        //缩放
+        webSet.setSupportZoom(true);
+        //设置编码
+        webSet.setDefaultTextEncodingName("utf-8");
+        webSet.setSaveFormData(true);
+
+        //设置视频播放
+//        webSet.setPluginState(WebSettings.PluginState.ON);
+        txWebView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onPageStarted(WebView webView, String s, Bitmap bitmap) {
+                super.onPageStarted(webView, s, bitmap);
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPageFinished(WebView webView, String s) {
+                super.onPageFinished(webView, s);
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode,
+                                        String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+//                showToast("网络请求错误");
+                DLog.w(Config.LOG_TAG, "错误信息:" + description);
+                view.stopLoading();
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
+        txWebView.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public void onProgressChanged(WebView webView, int i) {
+                super.onProgressChanged(webView, i);
+                if (i > 5) {
+                    progressBar.setProgress(i);
+                }
+            }
+
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                super.onReceivedTitle(view, title);
+                toolbar.setTitle(title);
+            }
+
+        });
+        txWebView.loadUrl(srcUrl);
+
+//        webSet = mWebView.getSettings();
+//        //设置WebView参数
+//        webSet.setUseWideViewPort(true);
+//        webSet.setJavaScriptEnabled(true);
+//        //设置可以由JavaScript打开新窗口
+//        webSet.setJavaScriptCanOpenWindowsAutomatically(true);
+//        webSet.setGeolocationEnabled(true);
+//        webSet.setAllowContentAccess(true);
+//        //允许WebView访问文件数据
+//        webSet.setAllowFileAccess(true);
+//        //启用应用缓存
+//        webSet.setAppCacheEnabled(true);
+//        //启用DOM缓存
+//        webSet.setDomStorageEnabled(true);
+//        //启用数据库缓存
+//        webSet.setDatabaseEnabled(true);
+//        //缩放
+//        webSet.setSupportZoom(true);
+//        //设置是否可缩放,会出现缩放工具
+//        webSet.setBuiltInZoomControls(true);
+//        //隐藏缩放工具
+//        webSet.setDisplayZoomControls(false);
+//        webSet.setSaveFormData(false);
+//        webSet.setSavePassword(false);
+//        //允许加载图片,可不写,默认false
+//        webSet.setBlockNetworkImage(false);
+//        //指定WebView的页面布局显示形式，调用该方法会引起页面重绘。默认值为LayoutAlgorithm#NARROW_COLUMNS。
+//        webSet.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+//        //将图片调整到适合webview的大小
+//        webSet.setUseWideViewPort(true);
+//        //缩放至屏幕的大小
+//        webSet.setLoadWithOverviewMode(true);
+//
+//        //MIXED_CONTENT_ALWAYS_ALLOW：允许从任何来源加载内容，即使起源是不安全的；
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            webSet.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+//        }
+//        mWebView.setHorizontalScrollBarEnabled(false);//水平滚动条不显示
+//        mWebView.setVerticalScrollBarEnabled(false); //垂直滚动条不显示
+//        //设置编码
+//        webSet.setDefaultTextEncodingName("utf-8");
+//        //设置视频播放
+//        webSet.setPluginState(WebSettings.PluginState.ON);
+//
+//        mWebView.loadUrl(srcUrl);
+//        mWebView.setWebViewClient(new WebViewClient() {
+//            @Override
+//            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+//                if (Build.VERSION.SDK_INT >= 21) {
+//                    view.loadUrl(request.getUrl().toString());
+//                } else {
+//                    view.loadUrl(request.toString());
+//                }
+//                return true;
+//            }
+//
+//            @Override
+//            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+//                super.onPageStarted(view, url, favicon);
+//                progressBar.setVisibility(View.VISIBLE);
+//            }
+//
+//            @Override
+//            public void onPageFinished(WebView view, String url) {
+//                super.onPageFinished(view, url);
+//                progressBar.setVisibility(View.GONE);
+//            }
+//
+//        });
+//        mWebView.setWebChromeClient(new WebChromeClient() {
+//            @Override
+//            public void onProgressChanged(WebView view, int newProgress) {
+//                super.onProgressChanged(view, newProgress);
+//                if (newProgress > 5) {
+//                    progressBar.setProgress(newProgress);
+//                }
+//            }
+//
+//            @Override
+//            public void onReceivedTitle(WebView view, String title) {
+//                super.onReceivedTitle(view, title);
+//                //设置网页标题到toolbar
+//                toolbar.setTitle(title);
+//            }
+//
+//        });
+
+
+        //自定义手指缩放
+//        mWebView.setOnTouchListener(new View.OnTouchListener() {
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch (event.getActionMasked()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        oldFirstX = event.getX();
+//                        oldFirstY = event.getY();
+//                        break;
+//                    case MotionEvent.ACTION_POINTER_DOWN:
+//                        oldSecondX = event.getX();
+//                        oldSecondY = event.getY();
+//                        break;
+//                    case MotionEvent.ACTION_MOVE:
+//                        for (int i = 0; i < event.getPointerCount(); i++) {
+//                            if (i == 0) {
+//                                newFirstX = event.getX();
+//                                newFirstY = event.getY();
+//                            } else if (i == 1) {
+//                                newSecondX = event.getX();
+//                                newSecondY = event.getY();
+//                            }
+//                        }
+//                        float oldDis = (float) Math.sqrt(Math.pow((oldSecondX - oldFirstX), 2)
+//                                + Math.pow((oldSecondY - oldFirstY), 2));
+//                        float newDis = (float) Math.sqrt(Math.pow((newSecondX - newFirstX), 2)
+//                                + Math.pow((newSecondY - newFirstY), 2));
+//                        if (oldDis - newDis >= 25) {
+//                            mWebView.zoomOut();
+//                        } else {
+//                            mWebView.zoomIn();
+//                        }
+//                        oldFirstX = newFirstX;
+//                        oldFirstY = newFirstY;
+//                        oldSecondX = newSecondX;
+//                        oldSecondY = newSecondY;
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        mWebView.onPause();
+//        txWebView.onPause();
+        txWebView.getX5WebViewExtension().deactive();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        mWebView.onResume();
+//        txWebView.onResume();
+        txWebView.getX5WebViewExtension().active();
+    }
+
+//    @Override
+//    public void onBackPressed() {
+//        if (mWebView.canGoBack()) {
+//            mWebView.goBack();
+//        } else {
+//            super.onBackPressed();
+//        }
+//    }
+
+    @Override
+    public void onBackPressedSupport() {
+//        if (mWebView.canGoBack()) {
+//            mWebView.goBack();
+//        } else {
+//            super.onBackPressedSupport();
+//        }
+        if (txWebView.canGoBack()) {
+            txWebView.goBack();
+        } else {
+            super.onBackPressedSupport();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+//        if (mWebView != null) {
+//            mWebView.getSettings().setBuiltInZoomControls(true);
+//            mWebView.setVisibility(View.GONE);
+//            mRootView.removeView(mWebView);
+//            mWebView.destroy();
+//            mWebView = null;
+//        }
+        if (txWebView != null) {
+            txWebView.getSettings().setBuiltInZoomControls(true);
+            txWebView.setVisibility(View.GONE);
+            mRootView.removeView(txWebView);
+            txWebView.destroy();
+            txWebView = null;
+        }
+        super.onDestroy();
+    }
+}

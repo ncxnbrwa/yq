@@ -1,0 +1,133 @@
+package cn.iimedia.yq;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.blankj.utilcode.util.EmptyUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.qmuiteam.qmui.widget.QMUIFloatLayout;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+import cn.iimedia.yq.Base.BaseActivity;
+import cn.iimedia.yq.Base.utils.MyUtils;
+import cn.iimedia.yq.http.APIConstants;
+import cn.iimedia.yq.http.RequestEngine;
+import cn.iimedia.yq.http.bean.ResponseBean.CommonResponse;
+import cn.iimedia.yq.http.bean.ResponseBean.RelatedWordBean;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class AddProjectActivity extends BaseActivity {
+    @BindView(R.id.add_project_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.float_layout)
+    QMUIFloatLayout mFloatView;
+    @BindView(R.id.et_project_name)
+    EditText etName;
+    @BindView(R.id.btn_submit)
+    Button btnSubmit;
+
+    APIConstants apiConstants = null;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_add_project;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        apiConstants = RequestEngine.createService(APIConstants.class);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        etName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Call<RelatedWordBean> relatedWordCall = apiConstants.queryRelatedWord(s.toString());
+                relatedWordCall.enqueue(new Callback<RelatedWordBean>() {
+                    @Override
+                    public void onResponse(Call<RelatedWordBean> call, Response<RelatedWordBean> response) {
+                        if (EmptyUtils.isNotEmpty(response.body())) {
+                            RelatedWordBean relatedWordBean = response.body();
+                            MyUtils.reLogin(relatedWordBean.getLogin_error(), getBaseActivity());
+                            List<String> lists = response.body().getRecords();
+                            mFloatView.removeAllViews();
+                            if (lists.size() >= 20) {
+                                for (int i = 0; i < 20; i++) {
+                                    mFloatView.addView(createRelatedItem(lists.get(i)));
+                                }
+                            } else {
+                                for (String list2 : lists) {
+                                    mFloatView.addView(createRelatedItem(list2));
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RelatedWordBean> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    @OnClick(R.id.btn_submit)
+    public void submit(View v) {
+        Call<CommonResponse> addProjectCall = apiConstants.addProject(3, "",
+                etName.getText().toString(), "");
+        addProjectCall.enqueue(new Callback<CommonResponse>() {
+            @Override
+            public void onResponse(Call<CommonResponse> call, Response<CommonResponse> response) {
+                if (EmptyUtils.isNotEmpty(response.body())) {
+                    CommonResponse commonResponse = response.body();
+                    MyUtils.reLogin(commonResponse.getLogin_error(),getBaseActivity());
+                    ToastUtils.showShort(commonResponse.getMsg());
+                    AddProjectActivity.this.finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommonResponse> call, Throwable t) {
+                ToastUtils.showShort("添加失败");
+            }
+        });
+    }
+
+    //新建相关词标签
+    private TextView createRelatedItem(String text) {
+        TextView relatedItem = new TextView(this);
+        relatedItem.setBackgroundResource(R.drawable.related_item);
+        relatedItem.setTextSize(14);
+        relatedItem.setText(text);
+        relatedItem.setTextColor(Color.WHITE);
+        return relatedItem;
+    }
+}

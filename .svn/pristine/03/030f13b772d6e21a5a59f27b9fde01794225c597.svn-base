@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context="cn.iimedia.yq.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/icon_logo_white" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="iiMedia Big Data"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/login_edit_background"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:src="@drawable/icon_phone" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@color/white" />
+
+            <EditText
+                android:id="@+id/et_phone"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:background="@null"
+                android:hint="请输入手机号"
+                android:inputType="phone"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/login_edit_background"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:src="@drawable/icon_password" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@color/white" />
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:background="@null"
+                android:hint="请输入密码"
+                android:inputType="textPassword"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/login_edit_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="6dp"
+            android:text="手机登录"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_horizontal"
+            android:text="艾媒大数据舆情管控系统"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="iiMedia BigData Public Sentiment Supervise System"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+    </LinearLayout>
+</RelativeLayout>

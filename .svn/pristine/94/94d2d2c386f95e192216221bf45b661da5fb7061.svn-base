@@ -1,0 +1,181 @@
+package cn.iimedia.yq.Warning;
+
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+import com.blankj.utilcode.util.EmptyUtils;
+import com.github.jdsjlzx.interfaces.OnItemClickListener;
+import com.github.jdsjlzx.interfaces.OnLoadMoreListener;
+import com.github.jdsjlzx.interfaces.OnRefreshListener;
+import com.github.jdsjlzx.recyclerview.LRecyclerView;
+import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import cn.iimedia.yq.Base.BaseFragment;
+import cn.iimedia.yq.Base.Config;
+import cn.iimedia.yq.Base.utils.ComponentsUtils;
+import cn.iimedia.yq.Base.utils.ELS;
+import cn.iimedia.yq.Base.utils.MyUtils;
+import cn.iimedia.yq.R;
+import cn.iimedia.yq.Warning.adapter.WarningListAdapter;
+import cn.iimedia.yq.custom.LinearLayoutManagerWrapper;
+import cn.iimedia.yq.http.APIConstants;
+import cn.iimedia.yq.http.RequestEngine;
+import cn.iimedia.yq.http.bean.ResponseBean.UserWarningBean;
+import cn.iimedia.yq.http.bean.ResponseBean.UserWarningRecordsList;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+/**
+ * Created by iiMedia on 2017/12/11.
+ * 舆情预警
+ */
+
+public class FragmentWarning extends BaseFragment implements OnRefreshListener, OnLoadMoreListener {
+    public static final String TAG = "FragmentWarning";
+
+    @BindView(R.id.warning_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.warning_list)
+    LRecyclerView rvWarningList;
+
+    ELS els;
+    APIConstants apiConstants;
+    QMUITipDialog loadingDialog;
+    List<UserWarningRecordsList> historyWarningList;
+    LRecyclerViewAdapter lRecyclerViewAdapter;
+    WarningListAdapter warningListAdapter;
+    int pageNum = 1, pageSize = 10;
+
+    public static FragmentWarning getInstance() {
+        FragmentWarning fragmentWarning = new FragmentWarning();
+        return fragmentWarning;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_warning;
+    }
+
+    @Override
+    protected void init() {
+        els = ELS.getInstance(getBaseActivity());
+        apiConstants = RequestEngine.createService(APIConstants.class);
+//        toolbar.setTitle(els.getStringData(ELS.CURRENT_TASK_NAME));
+        toolbar.setTitle("预警通知");
+        loadingDialog = ComponentsUtils.getLoadingDialog(getBaseActivity(), "加载中...");
+        rvWarningList.setLayoutManager(new LinearLayoutManagerWrapper(getBaseActivity()));
+        rvWarningList.setOnRefreshListener(this);
+        rvWarningList.setOnLoadMoreListener(this);
+    }
+
+    private void loadWarningData(final boolean loading) {
+        if (loading) {
+            loadingDialog.show();
+        }
+        Call<UserWarningBean> getWarningCall = apiConstants.getUserWarining(pageSize, pageNum);
+        getWarningCall.enqueue(new Callback<UserWarningBean>() {
+            @Override
+            public void onResponse(Call<UserWarningBean> call, Response<UserWarningBean> response) {
+                if (EmptyUtils.isNotEmpty(response.body())) {
+                    UserWarningBean userWarningBean = response.body();
+                    MyUtils.reLogin(userWarningBean.getLogin_error(), getBaseActivity());
+                    if (EmptyUtils.isNotEmpty(userWarningBean.getRecords())) {
+                        if (historyWarningList == null) {
+                            historyWarningList = new ArrayList<>();
+                        }
+                        List<UserWarningRecordsList> list = userWarningBean.getRecords();
+                        historyWarningList.addAll(list);
+                        removeRepetition(historyWarningList);
+
+                        if (list.size() < pageSize) {
+                            rvWarningList.setNoMore(true);
+                        }
+                    } else {
+                        showToast("当前无数据");
+                    }
+                }
+                if (loading) {
+                    loadingDialog.dismiss();
+                }
+                rvWarningList.refreshComplete(pageSize);
+                initAdapter();
+            }
+
+            @Override
+            public void onFailure(Call<UserWarningBean> call, Throwable t) {
+                showToast("数据拉取失败");
+                if (loading) {
+                    loadingDialog.dismiss();
+                }
+                rvWarningList.refreshComplete(pageSize);
+            }
+        });
+
+    }
+
+    @Override
+    public void onLoadMore() {
+        pageNum++;
+        loadWarningData(false);
+    }
+
+    @Override
+    public void onRefresh() {
+        pageNum = 1;
+        if (EmptyUtils.isNotEmpty(historyWarningList)) {
+            historyWarningList.clear();
+            lRecyclerViewAdapter.notifyDataSetChanged();
+        }
+        loadWarningData(false);
+    }
+
+
+    @Override
+    protected void lazyLoad() {
+        loadWarningData(true);
+    }
+
+    private void initAdapter() {
+        if (warningListAdapter == null) {
+            warningListAdapter = new WarningListAdapter(historyWarningList, getBaseActivity());
+        } else {
+            warningListAdapter.notifyDataSetChanged();
+        }
+        if (lRecyclerViewAdapter == null) {
+            lRecyclerViewAdapter = new LRecyclerViewAdapter(warningListAdapter);
+            rvWarningList.setAdapter(lRecyclerViewAdapter);
+        } else {
+            lRecyclerViewAdapter.notifyDataSetChanged();
+        }
+        //添加点击事件
+        lRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Bundle bundle = new Bundle();
+                if (EmptyUtils.isNotEmpty(historyWarningList)) {
+                    bundle.putInt(Config.WARNING_PROJECT_ID, historyWarningList.get(position).getProj_id());
+                    bundle.putString(Config.WARNING_DATE, String.valueOf(historyWarningList.get(position).getDateline()));
+                }
+                getBaseActivity().toActivity(WarningDetailActivity.class, bundle);
+            }
+        });
+    }
+
+    //去重
+    private void removeRepetition(List<UserWarningRecordsList> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).equals(list.get(i))) {
+                    list.remove(j);
+                }
+            }
+        }
+    }
+}

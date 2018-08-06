@@ -1,0 +1,167 @@
+package cn.iimedia.yq;
+
+import android.graphics.Bitmap;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+
+import cn.iimedia.yq.Base.BaseActivity;
+import cn.iimedia.yq.Base.utils.DLog;
+import cn.iimedia.yq.custom.ReWebChromeClient;
+import cn.iimedia.yq.http.RequestEngine;
+
+/**
+ * Created by iiMedia on 2017/11/9.
+ * 登录界面
+ */
+
+public class LoginActivity extends BaseActivity {
+    public static final String TAG = "LoginActivity";
+    //    EditText etPhone, etPassword;
+//    Button btnLogin;
+    WebView mWebView;
+    WebSettings webSet;
+    Toolbar toolbar;
+    ProgressBar progressBar;
+
+    @Override
+    protected int getLayoutId() {
+//        return R.layout.activity_login;
+        return R.layout.activity_login_web;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+//        etPassword = (EditText) findViewById(R.id.et_password);
+//        etPhone = (EditText) findViewById(R.id.et_phone);
+//        btnLogin = (Button) findViewById(R.id.btn_login);
+//
+//        btnLogin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ActivityUtils.startActivity(MainActivity.class);
+//
+//                String phoneStr = etPhone.getText().toString();
+//                String passStr = etPassword.getText().toString();
+//                if (!TextUtils.isEmpty(phoneStr)) {
+//                    if (RegexUtils.isMobileExact(phoneStr)) {
+//                        if (!TextUtils.isEmpty(passStr)) {
+//                        } else {
+//                            ToastUtils.showShort("密码不能为空");
+//                        }
+//                    } else {
+//                        ToastUtils.showShort("请输入正确的手机号码");
+//                    }
+//                } else {
+//                    ToastUtils.showShort("手机号不能为空");
+//                }
+//            }
+//        });
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        toolbar = (Toolbar) findViewById(R.id.login_toolbar);
+        setSupportActionBar(toolbar);
+        mWebView = (WebView) findViewById(R.id.webView);
+        webSet = mWebView.getSettings();
+        webSet.setUseWideViewPort(true);
+        webSet.setJavaScriptEnabled(true);
+        //设置可以由JavaScript打开新窗口
+        webSet.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSet.setGeolocationEnabled(true);
+        webSet.setAllowContentAccess(true);
+        //允许WebView访问文件数据
+        webSet.setAllowFileAccess(true);
+        //启用应用缓存
+        webSet.setAppCacheEnabled(true);
+        //启用DOM缓存
+        webSet.setDomStorageEnabled(true);
+        //启用数据库缓存
+        webSet.setDatabaseEnabled(true);
+        //不可缩放
+        webSet.setSupportZoom(true);
+        webSet.setSaveFormData(false);
+        webSet.setSavePassword(false);
+        //允许加载图片,可不写,默认false
+        webSet.setBlockNetworkImage(false);
+        //指定WebView的页面布局显示形式，调用该方法会引起页面重绘。默认值为LayoutAlgorithm#NARROW_COLUMNS。
+        webSet.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        //将图片调整到适合webview的大小
+        webSet.setUseWideViewPort(true);
+        //缩放至屏幕的大小
+        webSet.setLoadWithOverviewMode(true);
+
+        //在Android 5.0上 Webview 默认不允许加载 Http 与 Https 混合内容
+        //MIXED_CONTENT_ALWAYS_ALLOW：允许从任何来源加载内容，即使起源是不安全的；
+        //MIXED_CONTENT_NEVER_ALLOW：不允许Https加载Http的内容，即不允许从安全的起源去加载一个不安全的资源；
+        //MIXED_CONTENT_COMPATIBILITY_MODE：当涉及到混合式内容时，WebView 会尝试去兼容最新Web浏览器的风格。
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webSet.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+        mWebView.setHorizontalScrollBarEnabled(false);//水平滚动条不显示
+        mWebView.setVerticalScrollBarEnabled(false); //垂直滚动条不显示
+        //设置编码
+        webSet.setDefaultTextEncodingName("utf-8");
+
+        mWebView.loadUrl(RequestEngine.LOGIN);
+        String cookie = getCookie(RequestEngine.LOGIN);
+        DLog.e(TAG, "cookies:" + cookie);
+        mWebView.setWebChromeClient(new ReWebChromeClient());
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if (Build.VERSION.SDK_INT >= 21) {
+                    view.loadUrl(request.getUrl().toString());
+                } else {
+                    view.loadUrl(request.toString());
+                }
+                return true;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private String getCookie(String url) {
+        String cook = "";
+        if (Build.VERSION.SDK_INT < 21) {
+            CookieSyncManager.createInstance(this);
+            CookieSyncManager.getInstance().sync();
+        } else {
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.setAcceptCookie(true);
+            cookieManager.flush();
+            cook = cookieManager.getCookie(url);
+        }
+        return cook;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mWebView.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mWebView.destroy();
+    }
+}

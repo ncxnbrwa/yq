@@ -1,0 +1,55 @@
+package cn.iimedia.yq.http;
+
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+/**
+ * Created by iiMedia on 2017/11/9.
+ * Retrofit请求
+ */
+
+public class RequestEngine {
+    public static String TAG = "RequestEngine";
+
+    //    public static final String HOST = "http://yq.iimedia.cn/";
+//    public static final String HOST = "http://10.1.1.93:8080/";
+//    public static final String HOST = "http://10.1.1.186:8080/";
+        public static final String HOST = "http://testyq.iimedia.cn/";
+
+    //登录
+    public static final String LOGIN = "auto/login";
+
+    //获取当前项目
+    public static final String GET_CURRENT_PROJECT = "project/project_list";
+
+    //拉取主页文章
+    public static final String GET_NEWS = "detail/getNews";
+
+    private static OkHttpClient okClient = new OkHttpClient.Builder()
+            .addInterceptor(getHttpLoggingInterceptor())
+            .addInterceptor(new CookiesAddInterceptor())
+//            .addInterceptor(new CookiesReceiverInterceptor())
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .build();
+
+    private static Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(HOST)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okClient)
+            .build();
+
+    public static <S> S createService(Class<S> serviceClass) {
+        return retrofit.create(serviceClass);
+    }
+
+    public static HttpLoggingInterceptor getHttpLoggingInterceptor() {
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        return httpLoggingInterceptor;
+    }
+
+}

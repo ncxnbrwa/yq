@@ -1,0 +1,71 @@
+package cn.iimedia.yq.Warning.adapter;
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import cn.iimedia.yq.R;
+import cn.iimedia.yq.http.bean.ResponseBean.WarningNewsRecord;
+
+/**
+ * Created by iiMedia on 2017/12/15.
+ * 预警详情新闻列表adapter
+ */
+
+public class WarningDetailAdapter extends RecyclerView.Adapter<WarningDetailAdapter.WarningDetailViewHolder> {
+    List<WarningNewsRecord> list;
+    Context context;
+    LayoutInflater inflater;
+
+    public WarningDetailAdapter(List<WarningNewsRecord> list, Context context) {
+        this.list = list;
+        this.context = context;
+        inflater = LayoutInflater.from(context);
+    }
+
+    @Override
+    public WarningDetailViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = inflater.inflate(R.layout.news_list_item, parent, false);
+        return new WarningDetailViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(WarningDetailViewHolder holder, int position) {
+        WarningNewsRecord warningNewsRecord = list.get(position);
+        holder.newsTitle.setText(warningNewsRecord.getTitle());
+        holder.newsDetail.setText(warningNewsRecord.getSummary());
+        //时间戳转换
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(warningNewsRecord.getRelease_time() * 1000);
+        holder.newsTime.setText(sdf.format(date).replace(" ","\n"));
+    }
+
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
+    class WarningDetailViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tv_news_time)
+        TextView newsTime;
+        @BindView(R.id.tv_news_detail)
+        TextView newsDetail;
+        @BindView(R.id.tv_news_title)
+        TextView newsTitle;
+
+        public WarningDetailViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+}

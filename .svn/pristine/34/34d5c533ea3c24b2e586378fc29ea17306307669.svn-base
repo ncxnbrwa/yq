@@ -1,0 +1,82 @@
+package cn.iimedia.yq.Base.utils;
+
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
+public class ELS {
+	private static final String ELS = "EL_SharePrefence";
+	private static ELS mPref = null;
+	private SharedPreferences mSharePrefer = null;
+	private Editor mEditor = null;
+
+	public static final String USERNAME = "UserName";
+	public static final String PASSWORD = "Password";
+	public static final String PHONE = "Phone";
+	public static final String USER_IMG = "user_img";
+	public static final String LOGINUSERID = "loginuserid";
+	public static final String CLIENTID = "clientid";
+	public static final String ACCEPTNOTIFITION = "acceptNotifition";
+	public static final String ACCEPTPRIVATEMSG = "acceptPrivateMsg";
+	public static final String SESSION_KEY = "session_key";
+	public static final String UPDATE_VERSION_DATE ="update_version_date";
+
+	//一键清除sessionkey
+	public void clearSessionkey(){
+		mEditor.putString(SESSION_KEY,null);
+		mEditor.commit();
+	}
+
+	//清除所用户相关的信息
+	public void clearUserInfo(){
+		mEditor.putString(SESSION_KEY,null);
+		mEditor.putString(PHONE, null);
+		mEditor.putString(USERNAME, null);
+		mEditor.putString(USER_IMG, null);
+		mEditor.commit();
+	}
+
+	public void saveStringData(String key,String value){
+		mEditor.putString(key, value);
+		mEditor.commit();
+	}
+	public String getStringData(String key){
+		return mSharePrefer.getString(key,"");
+	}
+	public void saveIntData(String key,int value){
+		mEditor.putInt(key, value);
+		mEditor.commit();
+	}
+	public int getIntData(String key,int defaultValue){
+		return mSharePrefer.getInt(key,defaultValue);
+	}
+	public void saveFloatData(String key,float value){
+		mEditor.putFloat(key, value);
+		mEditor.commit();
+	}
+	public float getFloatData(String key){
+		return mSharePrefer.getFloat(key,0);
+	}
+
+
+	public static ELS getInstance(Context context){
+		if(mPref == null){
+			mPref = new ELS(context);
+		}
+		return mPref;
+	}
+	private ELS(Context context){
+		mSharePrefer = context.getSharedPreferences(ELS,Context.MODE_PRIVATE);
+		mEditor = mSharePrefer.edit();
+	}
+
+	/**
+	 * 清空 SharedPreferences
+	 */
+	public void clear() {
+		mEditor.clear();
+		mEditor.commit();
+	}
+
+}

@@ -1,0 +1,126 @@
+package cn.iimedia.yq.Base;
+
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import cn.iimedia.yq.Base.utils.DLog;
+
+
+public abstract class BaseFragment extends Fragment {
+    public YqApplication mElfApp = null;
+    boolean injected = false;
+    boolean isInit = false;
+    boolean isLoad = false;
+    public static Toast toast;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mElfApp = YqApplication.getInstance();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        injected = true;
+        return inflater.inflate(getLayoutId(), null, false);
+    }
+
+    protected abstract int getLayoutId();
+
+    //XUtils必写方法，初始view
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (!injected) {
+        }
+        isInit = true;
+        //创建时也去加载数据
+        canLoadData();
+    }
+
+    //该方法可以获取当前fragment是否可见
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        canLoadData();
+    }
+
+    //懒加载
+    private void canLoadData() {
+        DLog.d(getClass().getSimpleName(), "isInit:" + isInit);
+        if (!isInit)
+            return;
+
+        if (getUserVisibleHint()) {
+            lazyLoad();
+            isLoad = true;
+        } else {
+            if (isLoad) {
+                stopLoad();
+            }
+        }
+    }
+
+    protected abstract void lazyLoad();
+
+    protected void stopLoad() {
+    }
+
+    //展示Toast
+    public void showToast(String msg) {
+        if (toast != null)
+            toast.cancel();
+        toast = Toast.makeText(this.getActivity(), msg, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    //获取对应控件
+    public <T extends View> T getView(int viewId) {
+        return (T) this.getActivity().findViewById(viewId);
+    }
+
+    //获取当前依赖的Activity
+    public BaseActivity getBaseActivity() {
+        return (BaseActivity) getActivity();
+    }
+
+    @Override
+    public void onPause() {
+        DLog.d(getClass().getSimpleName(), "onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        //销毁试图时把标志位都置为false
+        injected = false;
+        isInit = false;
+        isLoad = false;
+        DLog.d(getClass().getSimpleName(), "onDestroyView");
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        DLog.d(getClass().getSimpleName(), "onDestroy");
+        super.onDestroy();
+    }
+
+    //放入传值的参数
+    public void setInternalActivityParam(String key, Object object) {
+        mElfApp.setInternalActivityParam(key, object);
+    }
+
+    //获取传值的参数
+    public Object receiveInternalActivityParam(String key) {
+        return mElfApp.receiveInternalActivityParam(key);
+    }
+
+}

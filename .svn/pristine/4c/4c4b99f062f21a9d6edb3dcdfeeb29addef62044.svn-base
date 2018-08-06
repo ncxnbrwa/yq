@@ -1,0 +1,187 @@
+package cn.iimedia.yq.analyze;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.EmptyUtils;
+import com.example.zhouwei.library.CustomPopWindow;
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+
+import net.lucode.hackware.magicindicator.MagicIndicator;
+import net.lucode.hackware.magicindicator.ViewPagerHelper;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+import cn.iimedia.yq.Base.BaseFragment;
+import cn.iimedia.yq.Base.Config;
+import cn.iimedia.yq.Base.utils.ComponentsUtils;
+import cn.iimedia.yq.Base.utils.ELS;
+import cn.iimedia.yq.HomeNewsList.ProjectManagerActivity;
+import cn.iimedia.yq.R;
+import cn.iimedia.yq.analyze.Adapter.AnalyzePagerAdapter;
+import cn.iimedia.yq.analyze.Adapter.AnalyzeTabAdapter;
+
+/**
+ * Created by iiMedia on 2017/12/20.
+ * 图表分析界面
+ */
+
+public class FragmentAnalyze extends BaseFragment {
+    @BindView(R.id.rootview)
+    CoordinatorLayout mRootView;
+    @BindView(R.id.analyze_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.analyze_head_right)
+    TextView tvTime;
+    @BindView(R.id.analyze_tab)
+    MagicIndicator tabLayout;
+    @BindView(R.id.analyze_pager)
+    ViewPager pager;
+
+    ELS els;
+    AnalyzePagerAdapter pagerAdapter = null;
+    QMUITipDialog loadingDialog;
+    List<Fragment> fragments = new ArrayList<>();
+    List<String> titles = new ArrayList<>();
+    CustomPopWindow timeChooseWindow;
+    AnalyzeChangeProjectReceiver receiver;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_analyze;
+    }
+
+    public static FragmentAnalyze getInstance() {
+        FragmentAnalyze fragmentAnalyze = new FragmentAnalyze();
+        return fragmentAnalyze;
+    }
+
+    @Override
+    protected void init() {
+        els = ELS.getInstance(getBaseActivity());
+        els.saveStringData(ELS.TIME_RANGE, "24-hour");
+//        toolbar.setTitle(els.getStringData(ELS.CURRENT_TASK_NAME));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivityUtils.startActivity(getBaseActivity(), ProjectManagerActivity.class);
+                getBaseActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.open_exit);
+            }
+        });
+        loadingDialog = ComponentsUtils.getLoadingDialog(getBaseActivity(), "加载中...");
+        pager.setOffscreenPageLimit(3);
+        titles.add("热度指数");
+        titles.add("媒体占比");
+        titles.add("情感走势");
+        titles.add("情感比例");
+        fragments.add(FragmentHeat.getInstance());
+        fragments.add(FragmentMediaRatio.getInstance());
+        fragments.add(FragmentEmotionTrend.getInstance());
+        fragments.add(FragmentEmoRatio.getInstance());
+        pagerAdapter = new AnalyzePagerAdapter(getFragmentManager(), fragments);
+        pager.setAdapter(pagerAdapter);
+        //设置Tab
+        CommonNavigator commonNavigator = new CommonNavigator(getBaseActivity());
+        //设置Tab平分
+        commonNavigator.setAdjustMode(true);
+        commonNavigator.setAdapter(new AnalyzeTabAdapter(titles, pager));
+        tabLayout.setNavigator(commonNavigator);
+        ViewPagerHelper.bind(tabLayout, pager);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        receiver = new AnalyzeChangeProjectReceiver();
+        IntentFilter filter = new IntentFilter(Config.CHOOSE_PROJECT_ACTION);
+        getBaseActivity().registerReceiver(receiver,filter);
+    }
+
+    @OnClick({R.id.analyze_head_right})
+    public void click(View v) {
+        switch (v.getId()) {
+            case R.id.analyze_head_right:
+                View headRightView = LayoutInflater.from(getBaseActivity())
+                        .inflate(R.layout.popwindow_home_head_time, mRootView, false);
+                handleTimeViewClick(headRightView);
+                if (timeChooseWindow == null) {
+                    timeChooseWindow = new CustomPopWindow.PopupWindowBuilder(getBaseActivity())
+                            .setView(headRightView)
+                            .setOutsideTouchable(true)
+                            .setFocusable(true)
+                            .create()
+                            .showAsDropDown(toolbar, toolbar.getWidth() - tvTime.getWidth(), 0);
+                } else {
+                    timeChooseWindow.showAsDropDown(toolbar,
+                            toolbar.getWidth() - tvTime.getWidth(), 0);
+                }
+                break;
+        }
+    }
+
+    //时间选择弹窗的点击事件
+    private void handleTimeViewClick(View contentView) {
+        View.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (EmptyUtils.isNotEmpty(timeChooseWindow)) {
+                    timeChooseWindow.dissmiss();
+                }
+                switch (v.getId()) {
+                    case R.id.tv_24H:
+                        tvTime.setText("24H");
+                        els.saveStringData(ELS.TIME_RANGE, Config.TIME_24H);
+                        break;
+                    case R.id.tv_yesterday:
+                        tvTime.setText("昨天");
+                        els.saveStringData(ELS.TIME_RANGE, Config.TIME_YESTERDAY);
+                        break;
+                    case R.id.tv_aweek:
+                        tvTime.setText("一周");
+                        els.saveStringData(ELS.TIME_RANGE, Config.TIME_WEEK);
+                        break;
+                    case R.id.tv_amonth:
+                        tvTime.setText("30天");
+                        els.saveStringData(ELS.TIME_RANGE, Config.TIME_MONTH);
+                        break;
+                }
+                getBaseActivity().sendBroadcast(new Intent(Config.CHOOSE_TIME_RANGE_ACTION));
+            }
+        };
+        contentView.findViewById(R.id.tv_24H).setOnClickListener(clickListener);
+        contentView.findViewById(R.id.tv_yesterday).setOnClickListener(clickListener);
+        contentView.findViewById(R.id.tv_aweek).setOnClickListener(clickListener);
+        contentView.findViewById(R.id.tv_amonth).setOnClickListener(clickListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getBaseActivity().unregisterReceiver(receiver);
+    }
+
+    class AnalyzeChangeProjectReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Config.CHOOSE_PROJECT_ACTION)) {
+                toolbar.setTitle(els.getStringData(ELS.CURRENT_TASK_NAME));
+            }
+        }
+    }
+}

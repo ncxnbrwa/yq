@@ -1,0 +1,117 @@
+package cn.iimedia.yq.http.bean.DatabaseBean;
+
+import android.support.annotation.NonNull;
+
+import org.litepal.crud.DataSupport;
+
+/**
+ * Created by iiMedia on 2017/12/11.
+ * 项目数据库
+ */
+
+public class ProjectDatabase extends DataSupport implements Comparable {
+
+    /**
+     * keywords : 家
+     * project_id : 966
+     * project_keyword : 家
+     * projectname : 家
+     * related_keywords : 爸爸,妈妈
+     * model : 1
+     */
+
+    private long id;
+    private String keywords;
+    private int project_id;
+    private String project_keyword;
+    private String projectname;
+    private String related_keywords;
+    private int model;
+    private int useCount = 0;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
+    public int getProject_id() {
+        return project_id;
+    }
+
+    public void setProject_id(int project_id) {
+        this.project_id = project_id;
+    }
+
+    public String getProject_keyword() {
+        return project_keyword;
+    }
+
+    public void setProject_keyword(String project_keyword) {
+        this.project_keyword = project_keyword;
+    }
+
+    public String getProjectname() {
+        return projectname;
+    }
+
+    public void setProjectname(String projectname) {
+        this.projectname = projectname;
+    }
+
+    public String getRelated_keywords() {
+        return related_keywords;
+    }
+
+    public void setRelated_keywords(String related_keywords) {
+        this.related_keywords = related_keywords;
+    }
+
+    public int getModel() {
+        return model;
+    }
+
+    public void setModel(int model) {
+        this.model = model;
+    }
+
+    public int getUseCount() {
+        return useCount;
+    }
+
+    public void setUseCount(int useCount) {
+        this.useCount = useCount;
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectDatabase{" +
+                "id=" + id +
+                ", keywords='" + keywords + '\'' +
+                ", project_id=" + project_id +
+                ", project_keyword='" + project_keyword + '\'' +
+                ", projectname='" + projectname + '\'' +
+                ", related_keywords='" + related_keywords + '\'' +
+                ", model=" + model +
+                ", useCount=" + useCount +
+                '}';
+    }
+
+    //按照使用次数降序排列
+    @Override
+    public int compareTo(@NonNull Object o) {
+        ProjectDatabase pd = (ProjectDatabase) o;
+        //this在前为升序,在后为降序
+        return pd.getUseCount() - this.getUseCount();
+    }
+}

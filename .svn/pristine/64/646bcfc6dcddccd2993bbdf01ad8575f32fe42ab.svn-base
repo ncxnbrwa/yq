@@ -1,0 +1,13 @@
+
+package cn.iimedia.model;
+
+/**
+ * @author xiong
+ * @ClassName: APIConstants
+ * @Description: todo(各个API接口)
+ * @date 2016/12/16
+ */
+public class APIConstants
+{
+
+}

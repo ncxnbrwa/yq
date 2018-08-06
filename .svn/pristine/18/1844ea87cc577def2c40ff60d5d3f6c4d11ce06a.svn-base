@@ -1,0 +1,61 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+ 	<dimen name="base_action_bar_height">48.0dip</dimen>
+    <dimen name="base_action_bar_title_size">22.0sp</dimen>
+    
+    <dimen name="font18">18sp</dimen>
+    <dimen name="font12">12sp</dimen>
+    <dimen name="font14">14sp</dimen>
+    <dimen name="font16">16sp</dimen>
+    <dimen name="grap0.01">0.01dp</dimen>
+    <dimen name="grap1">1dp</dimen>
+    <dimen name="grap0">0dp</dimen>
+    <dimen name="grap10">5dp</dimen>
+    <dimen name="grap15">8dp</dimen>
+    <dimen name="grap20">10dp</dimen>
+    <dimen name="grap30">15dp</dimen>
+    <dimen name="grap40">20dp</dimen>
+    <dimen name="grap80">40dp</dimen>
+    <dimen name="grap102">51dp</dimen>
+    
+    <dimen name="height200">100dp</dimen>
+    <dimen name="height240">120dp</dimen>
+    <dimen name="height272">136dp</dimen>
+    <dimen name="height188">94dp</dimen>
+    <dimen name="height160">80dp</dimen>
+    <dimen name="height116">58dp</dimen>
+    <dimen name="height121">60dp</dimen>
+    <dimen name="height90">45dp</dimen>
+    <dimen name="height80">40dp</dimen>
+    <dimen name="height72">36dp</dimen>
+    <dimen name="height63">32dp</dimen>
+    <dimen name="height60">30dp</dimen>
+    <dimen name="height40">20dp</dimen>
+    <dimen name="height13">6dp</dimen>
+    <dimen name="width90">45dp</dimen>
+    <dimen name="width292">146dp</dimen>
+    <dimen name="width123">62dp</dimen>
+    <dimen name="width153">76dp</dimen>
+    <dimen name="width370">185dp</dimen>
+    <dimen name="icon120">60dp</dimen>
+    <dimen name="icon104">52dp</dimen>
+    <dimen name="icon90">45dp</dimen>
+    <dimen name="icon73">36dp</dimen>
+    <dimen name="icon60">30dp</dimen>
+    <dimen name="icon48">24dp</dimen>
+    <dimen name="icon32">16dp</dimen>
+    <dimen name="icon19">10dp</dimen>
+    
+    <dimen name="divider_height">0.01dp</dimen>
+    <dimen name="item_height">36dp</dimen>
+	
+	  <dimen name="common_padding">8dp</dimen>
+    <dimen name="common_margin">8dp</dimen>
+	
+	    <dimen name="header_center">18sp</dimen>
+		 <dimen name="home_titlesize">14sp</dimen>
+    <dimen name="home_msgsize">12sp</dimen>
+</resources>

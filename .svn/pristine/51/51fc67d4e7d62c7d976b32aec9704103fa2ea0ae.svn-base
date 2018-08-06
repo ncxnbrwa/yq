@@ -1,0 +1,35 @@
+package cn.iimedia.yq.custom;
+
+import android.content.Context;
+import android.widget.TextView;
+
+import com.github.mikephil.charting.components.MarkerView;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
+
+import cn.iimedia.yq.Base.YqApplication;
+import cn.iimedia.yq.Base.utils.ELS;
+import cn.iimedia.yq.R;
+
+/**
+ * Created by iiMedia on 2017/12/25.
+ * 折线图标记
+ */
+
+public class HeatLineMarkerView extends MarkerView {
+    TextView tvContent1, tvContent2;
+
+    public HeatLineMarkerView(Context context) {
+        super(context, R.layout.heat_marker_view);
+        tvContent1 = (TextView) findViewById(R.id.chart_heat_content);
+        tvContent2 = (TextView) findViewById(R.id.chart_heat_content2);
+    }
+
+    @Override
+    public void refreshContent(Entry e, Highlight highlight) {
+        String taskName = ELS.getInstance(YqApplication.getAppContext()).getStringData(ELS.CURRENT_TASK_NAME);
+        tvContent1.setText(e.getData().toString());
+        tvContent2.setText(taskName + ":" + e.getY());
+        super.refreshContent(e, highlight);
+    }
+}

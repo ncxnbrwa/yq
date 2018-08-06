@@ -1,0 +1,68 @@
+package cn.iimedia.yq.Warning;
+
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+import com.blankj.utilcode.util.ActivityUtils;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
+
+import org.litepal.crud.DataSupport;
+
+import butterknife.BindView;
+import butterknife.OnClick;
+import cn.iimedia.yq.Base.BaseFragment;
+import cn.iimedia.yq.Base.YqApplication;
+import cn.iimedia.yq.Base.utils.ELS;
+import cn.iimedia.yq.LoginActivity;
+import cn.iimedia.yq.R;
+
+/**
+ * Created by iiMedia on 2017/12/11.
+ * 舆情预警
+ */
+
+public class FragmentWarning extends BaseFragment {
+    @BindView(R.id.warning_toolbar)
+    Toolbar toolbar;
+
+    ELS els;
+
+    public static FragmentWarning getInstance() {
+        FragmentWarning fragmentWarning = new FragmentWarning();
+        return fragmentWarning;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_warning;
+    }
+
+    @Override
+    protected void init() {
+        toolbar.setTitle("18915468559");
+        els = ELS.getInstance(YqApplication.getAppContext());
+    }
+
+    @OnClick(R.id.tv_logout)
+    public void click(View view) {
+        QMUIDialog dialog = new QMUIDialog.MessageDialogBuilder(getBaseActivity())
+                .setTitle("退出登录吗?")
+                .addAction("取消", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        dialog.dismiss();
+                    }
+                })
+                .addAction("确定", new QMUIDialogAction.ActionListener() {
+                    @Override
+                    public void onClick(QMUIDialog dialog, int index) {
+                        els.clearUserInfo();
+                        DataSupport.deleteAll("ProjectDatabase");
+                        mElfApp.finishApplication();
+                        ActivityUtils.startActivity(getBaseActivity(), LoginActivity.class);
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+}

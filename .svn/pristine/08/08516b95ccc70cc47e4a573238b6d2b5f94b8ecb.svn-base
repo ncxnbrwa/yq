@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cn.iimedia.yq.Warning.WarningDetailActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/warning_detail_toolbar"
+            style="@style/AppBaseTheme.Toolbar"
+            app:navigationIcon="@drawable/icon_back"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:title="预警详情" />
+    </android.support.design.widget.AppBarLayout>
+
+    <com.github.jdsjlzx.recyclerview.LRecyclerView
+        android:id="@+id/rv_warning_detail_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/news_list_item" />
+
+</android.support.design.widget.CoordinatorLayout>

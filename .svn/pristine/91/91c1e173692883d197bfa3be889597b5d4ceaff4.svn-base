@@ -1,0 +1,44 @@
+package cn.iimedia.yq
+
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import cn.iimedia.yq.Base.BaseActivity
+import cn.iimedia.yq.Base.YqApplication
+import cn.iimedia.yq.Base.utils.ELS
+import com.blankj.utilcode.util.ActivityUtils
+
+/**
+ * 启动图页面
+ */
+class SplashActivity : BaseActivity() {
+    var els: ELS? = null
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_splash
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setSwipeBackEnable(false)
+        els = ELS.getInstance(YqApplication.getAppContext())
+
+        //根据本地是否有session_key判断跳转
+        Handler(Looper.getMainLooper()).postDelayed({
+            if ((els?.cookieSet)!!.isNotEmpty()) {
+                ActivityUtils.startActivity(this, MainActivity::class.java)
+                finish()
+            } else {
+                ActivityUtils.startActivity(this, LoginActivity::class.java)
+                finish()
+            }
+        }, 2000)
+
+    }
+
+    override fun onBackPressedSupport() {
+        super.onBackPressedSupport()
+        mElfApp.finishApplication()
+    }
+
+}

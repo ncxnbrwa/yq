@@ -1,0 +1,71 @@
+<resources xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="AppTheme" parent="AppBaseTheme">
+
+    </style>
+
+    <style name="activity_animation_style">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/fade_back</item>
+        <item name="android:activityCloseEnterAnimation">@anim/fade_forward</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+
+    <!--Toolbar样式-->
+    <style name="AppBaseTheme.Toolbar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="AppBaseTheme.HotNewsText">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">@dimen/font_medium</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">#F8F8F8</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="AppBaseTheme.WarningText">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">@dimen/font_medium</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
+    </style>
+
+    <!--右侧箭头样式-->
+    <style name="right_arrow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/arrow_right</item>
+        <item name="android:clickable">false</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <!--所有按钮的样式-->
+    <style name="AppBaseTheme.ButtonNormal">
+        <item name="android:background">@drawable/button_normal_background</item>
+        <item name="android:textColor">@color/button_normal_textcolor</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+</resources>

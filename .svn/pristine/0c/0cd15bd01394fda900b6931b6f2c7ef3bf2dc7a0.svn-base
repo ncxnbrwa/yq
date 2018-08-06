@@ -1,0 +1,67 @@
+package cn.iimedia.yq.analyze.Adapter;
+
+import android.content.Context;
+import android.support.v4.view.ViewPager;
+import android.view.View;
+
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView;
+
+import java.util.List;
+
+import cn.iimedia.yq.R;
+
+/**
+ * Created by iiMedia on 2017/12/20.
+ * 头部tab adapter
+ */
+
+public class AnalyzeTabAdapter extends CommonNavigatorAdapter {
+    List<String> list;
+    ViewPager viewPager;
+
+    public AnalyzeTabAdapter(List<String> list, ViewPager viewPager) {
+        this.list = list;
+        this.viewPager = viewPager;
+    }
+
+    @Override
+    public int getCount() {
+        return list == null ? 0 : list.size();
+    }
+
+    @Override
+    public IPagerTitleView getTitleView(Context context, final int i) {
+        ColorTransitionPagerTitleView titleView = new ColorTransitionPagerTitleView(context);
+        //设置标题未选中颜色
+        titleView.setNormalColor(context.getResources().getColor(R.color.primary_text_color));
+        //设置标题选中颜色
+        titleView.setSelectedColor(context.getResources().getColor(R.color.colorAccent));
+        //设置对应标题
+        titleView.setText(list.get(i));
+        //设置点击事件
+        titleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(i);
+            }
+        });
+        return titleView;
+    }
+
+    @Override
+    public IPagerIndicator getIndicator(Context context) {
+        LinePagerIndicator indicator = new LinePagerIndicator(context);
+        //设置下划线模式
+        //MODE_MATCH_EDGE 长度铺满标签
+        //MODE_WRAP_CONTENT 长度和标题长度一样
+        //MODE_EXACTLY 长度一点点
+        indicator.setMode(LinePagerIndicator.MODE_MATCH_EDGE);
+        //设置下划线颜色
+        indicator.setColors(context.getResources().getColor(R.color.colorAccent));
+        return indicator;
+    }
+}

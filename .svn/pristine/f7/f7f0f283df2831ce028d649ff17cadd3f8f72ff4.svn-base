@@ -1,0 +1,223 @@
+package cn.iimedia.yq.http.bean.ResponseBean;
+
+/**
+ * Created by iiMedia on 2017/12/12.
+ * 消息数组类
+ */
+
+public class NewsListBean {
+
+    /**
+     * channel_name : 南宁
+     * city : 南宁
+     * comment_num : 0
+     * forward_num : 0
+     * hash_code : 13768922939430368595
+     * hot_index : 0
+     * image : http://inews.gtimg.com/newsapp_ls/0/2040818768_196130/0
+     * labels : 交管局,酒驾,公益活动,
+     * like_num : 0
+     * media_name : 南宁交警
+     * news_id : 35735902
+     * platform_id : 5
+     * platform_name : 天天快报
+     * province :
+     * read_num : 0
+     * release_time : 2017-09-13 19:53:25
+     * similar_num : 0
+     * src_url :
+     * status : 中立
+     * summary :
+     * title :
+     */
+
+    private String channel_name;
+    private String city;
+    private int comment_num;
+    private int forward_num;
+    private String hash_code;
+    private int hot_index;
+    private String image;
+    private String labels;
+    private int like_num;
+    private String media_name;
+    private String news_id;
+    private int platform_id; //13位微信
+    private String platform_name;
+    private String province;
+    private int read_num;
+    private String release_time;
+    private int similar_num;
+    private String src_url;
+    private String status;
+    private String summary;
+    private String title;
+
+    public String getChannel_name() {
+        return channel_name;
+    }
+
+    public void setChannel_name(String channel_name) {
+        this.channel_name = channel_name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public int getComment_num() {
+        return comment_num;
+    }
+
+    public void setComment_num(int comment_num) {
+        this.comment_num = comment_num;
+    }
+
+    public int getForward_num() {
+        return forward_num;
+    }
+
+    public void setForward_num(int forward_num) {
+        this.forward_num = forward_num;
+    }
+
+    public String getHash_code() {
+        return hash_code;
+    }
+
+    public void setHash_code(String hash_code) {
+        this.hash_code = hash_code;
+    }
+
+    public int getHot_index() {
+        return hot_index;
+    }
+
+    public void setHot_index(int hot_index) {
+        this.hot_index = hot_index;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getLabels() {
+        return labels;
+    }
+
+    public void setLabels(String labels) {
+        this.labels = labels;
+    }
+
+    public int getLike_num() {
+        return like_num;
+    }
+
+    public void setLike_num(int like_num) {
+        this.like_num = like_num;
+    }
+
+    public String getMedia_name() {
+        return media_name;
+    }
+
+    public void setMedia_name(String media_name) {
+        this.media_name = media_name;
+    }
+
+    public String getNews_id() {
+        return news_id;
+    }
+
+    public void setNews_id(String news_id) {
+        this.news_id = news_id;
+    }
+
+    public int getPlatform_id() {
+        return platform_id;
+    }
+
+    public void setPlatform_id(int platform_id) {
+        this.platform_id = platform_id;
+    }
+
+    public String getPlatform_name() {
+        return platform_name;
+    }
+
+    public void setPlatform_name(String platform_name) {
+        this.platform_name = platform_name;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public int getRead_num() {
+        return read_num;
+    }
+
+    public void setRead_num(int read_num) {
+        this.read_num = read_num;
+    }
+
+    public String getRelease_time() {
+        return release_time;
+    }
+
+    public void setRelease_time(String release_time) {
+        this.release_time = release_time;
+    }
+
+    public int getSimilar_num() {
+        return similar_num;
+    }
+
+    public void setSimilar_num(int similar_num) {
+        this.similar_num = similar_num;
+    }
+
+    public String getSrc_url() {
+        return src_url;
+    }
+
+    public void setSrc_url(String src_url) {
+        this.src_url = src_url;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+}
